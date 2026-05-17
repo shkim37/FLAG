@@ -1,20 +1,49 @@
 ---
-import type { Note } from "../types/types";
+import type { NoteGroup } from "../types/types";
 
 interface Props {
-  notes: Note[];
+  notes: NoteGroup[];
 }
 
 const { notes } = Astro.props;
+
+const isAffiliationGroup = (group: NoteGroup) =>
+  group.some((note) => note.size === "lg");
 ---
 
-<div class="text-center text-sm">
+<div class="flex flex-col gap-1 text-center">
   {
-    // prettier-ignore
-    notes.map((note, index, array) =>
-      <span>
-        <sup>{note.symbol}</sup>{note.text}{index < array.length - 1 ? "," : ""}
-      </span>
-    )
+    notes.map((group) => (
+      <div
+        class:list={[
+          isAffiliationGroup(group) && "flex flex-col items-center gap-0.5",
+        ]}
+      >
+        {
+          // prettier-ignore
+          group.map((note, index, array) => {
+            const affiliation = isAffiliationGroup(group);
+            const multiline = note.text.trim().includes("\n");
+            return (
+              <span
+                class:list={[
+                  affiliation && "block",
+                  note.size === "lg" && "text-[calc(1.125rem-1pt)]",
+                  note.size === "base" && "text-base",
+                  (!note.size || note.size === "sm") &&
+                    "text-[calc(0.875rem+1pt)]",
+                ]}
+              >
+                <sup>{note.symbol}</sup>
+                <span class:list={[multiline && "whitespace-pre-line"]}>
+                  {note.text.trim()}
+                </span>
+                {!affiliation && index < array.length - 1 ? "," : ""}
+              </span>
+            );
+          })
+        }
+      </div>
+    ))
   }
 </div>

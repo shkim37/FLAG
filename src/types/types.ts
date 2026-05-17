@@ -14,4 +14,7 @@ export type Link = {
 export type Note = {
   symbol: string;
   text: string;
+  size?: "sm" | "base" | "lg";
 };
+
+export type NoteGroup = Note[];

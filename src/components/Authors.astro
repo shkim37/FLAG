@@ -3,27 +3,47 @@ import type { Author } from "../types/types";
 
 interface Props {
   authors: Author[];
+  rows?: number;
 }
 
-const { authors } = Astro.props;
+const { authors, rows: rowsProp } = Astro.props;
+const rows = rowsProp ?? (authors.length >= 6 ? 2 : 1);
+const perRow = Math.ceil(authors.length / rows);
+const authorRows: Author[][] = [];
+for (let i = 0; i < authors.length; i += perRow) {
+  authorRows.push(authors.slice(i, i + perRow));
+}
 ---
 
-<div class="links flex flex-row flex-wrap justify-center gap-x-8 gap-y-4">
+<div class="not-prose flex flex-col gap-y-5">
   {
-    authors.map((author) => (
-      <div class="flex flex-col items-center text-center">
-        <div class="flex flex-row text-xl">
-          {author.url ? <a href={author.url}>{author.name}</a> : author.name}
-          {author.notes && (
-            <sup class="text-xl">
-              {author.notes.map(
-                (note, index, array) =>
-                  note + (index < array.length - 1 ? "," : ""),
+    authorRows.map((row) => (
+      <div class="flex flex-row flex-wrap justify-center gap-x-10 gap-y-3">
+        {row.map((author) => (
+          <div class="flex flex-col items-center text-center">
+            <span class="inline-flex items-baseline text-2xl leading-tight">
+              {author.url ? (
+                <a
+                  class="text-2xl text-blue-500 no-underline hover:underline dark:text-blue-300"
+                  href={author.url}>{author.name}</a
+                >
+              ) : (
+                author.name
               )}
-            </sup>
-          )}
-        </div>
-        {author.institution && <div>{author.institution}</div>}
+              {author.notes && (
+                <sup
+                  class="ml-0.5 text-[0.975rem] leading-none font-normal align-[0.45em]"
+                >
+                  {author.notes.map(
+                    (note, index, array) =>
+                      note + (index < array.length - 1 ? ", " : ""),
+                  )}
+                </sup>
+              )}
+            </span>
+            {author.institution && <div>{author.institution}</div>}
+          </div>
+        ))}
       </div>
     ))
   }

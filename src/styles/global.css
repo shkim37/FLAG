@@ -37,6 +37,14 @@ main {
   margin-inline: var(--actual-inline-margin);
 }
 
+/* Paper-style justified body text with automatic hyphenation */
+main :where(p, li) {
+  text-align: justify;
+  hyphens: auto;
+  hyphenate-limit-chars: 6 3 3;
+  text-wrap: pretty;
+}
+
 .full-bleed,
 main .katex-display {
   margin-inline: calc(var(--actual-inline-margin) * -1);

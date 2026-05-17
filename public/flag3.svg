@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="85" ry="85" fill="#0F766E"/>
+  <!-- Pole -->
+  <rect x="250" y="150" width="44" height="760" rx="18" fill="#D2D5DA"/>
+  <circle cx="272" cy="150" r="32" fill="#D2D5DA"/>
+  <!-- Triangular pennant extending right from top of pole -->
+  <path d="
+    M 294 210
+    L 820 410
+    L 294 610
+    Z"
+    fill="#D2D5DA"/>
+  <!-- Shadow triangle on lower half for depth -->
+  <path d="
+    M 294 410
+    L 820 410
+    L 294 610
+    Z"
+    fill="#AAADB2"/>
+</svg>

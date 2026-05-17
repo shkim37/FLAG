@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="85" ry="85" fill="#0F766E"/>
+  <!-- Pole -->
+  <rect x="270" y="150" width="48" height="760" rx="20" fill="#D2D5DA"/>
+  <circle cx="294" cy="150" r="34" fill="#D2D5DA"/>
+  <!-- Waving flag (top-attached at pole, wavy right edge) -->
+  <path d="
+    M 318 210
+    L 760 210
+    C 720 290, 800 330, 760 410
+    C 720 490, 800 530, 760 610
+    L 318 610
+    Z"
+    fill="#D2D5DA"/>
+  <!-- Shadow side of waves for depth -->
+  <path d="
+    M 760 210
+    C 720 290, 800 330, 760 410
+    C 720 490, 800 530, 760 610
+    L 720 600
+    C 760 525, 690 485, 720 405
+    C 750 325, 690 290, 720 215
+    Z"
+    fill="#AAADB2"/>
+</svg>

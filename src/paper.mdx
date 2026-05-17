@@ -1,24 +1,35 @@
 ---
-title: Academic Project Page Template
+title: |
+  FLAG: Flow Policy MaxEnt-RL by
+  Latent Augmented Guidance
 authors:
-  - name: Roman Hauksson
-    url: https://roman.technology
-    institution: University of Texas at Dallas
-    notes: ["*", †]
-  - name: Author Two
-    institution: Institution Two
-    notes: ["*", †]
-  - name: Author Three
-    institution: Institution Three
-    notes: ["*"]
-  - name: Author Four
-    institution: Institution Four
-conference: Conference Name
+  - name: Sungha Kim
+    # url: https://roman.technology
+    notes: ["*", "1"]
+  - name: Gawon Lee
+    notes: ["*", "1"]
+  - name: Jusuk Lee
+    url: https://ju-suk.github.io/
+    notes: ["1"]
+  - name: Jonghae Park
+    url: https://jonghaepark.github.io/
+    notes: ["1"]
+  - name: H. Jin Kim
+    url: https://larr.snu.ac.kr/
+    notes: ["1"]
+  - name: Daesol Cho
+    url: https://dscho1234.github.io/
+    notes: ["2"]
+# conference: Conference Name
 notes:
-  - symbol: "*"
-    text: author note one
-  - symbol: †
-    text: author note two
+  - - symbol: "1"
+      text: "Lab for Autonomous Robotics Research, Seoul National University"
+      size: lg
+    - symbol: "2"
+      text: Georgia Institute of Technology
+      size: lg
+  - - symbol: "*"
+      text: Equal contribution
 links:
   - name: Paper
     url: https://github.com/RomanHauksson/academic-project-astro-template
@@ -29,23 +40,21 @@ links:
   - name: arXiv
     url: https://github.com/RomanHauksson/academic-project-astro-template
     icon: academicons:arxiv
-  - name: Slides
-    url: https://github.com/RomanHauksson/academic-project-astro-template
-    icon: ri:slideshow-2-line
 
 # The color theme of the page. Defaults to "device" (the preference set in the user's brower or operating system). Setting this to "light" or "dark" will override the user's preference. This is useful if your figures only look good in one theme.
-theme: device
+theme: light
 
 # This is the icon that appears in the user's browser tab. To customize, change the favicon.svg file in /public/, or add your own file to /public/ and change the filename here.
-favicon: favicon.svg
+favicon: flag2.svg
 
 # These keys are optional. If a link to your project page is in a Google search result, text message, or social media post, it will often appear as a "link preview card" based on its title, description, favicon, and thumbnail. After you publish your page, you can double check that these previews look right using [this tool](https://linkpreview.xyz/)
 description: Simple project page template for your research paper, built with Astro and Tailwind
-thumbnail: screenshot-light.png
+# thumbnail: screenshot-light.png
 ---
 
 import Video from "./components/Video.astro";
 import HighlightedSection from "./components/HighlightedSection.astro";
+import ColorBox from "./components/ColorBox.astro";
 import SmallCaps from "./components/SmallCaps.astro";
 import Figure from "./components/Figure.astro";
 import Picture from "./components/Picture.astro";
@@ -62,30 +71,227 @@ import outside from "./assets/outside.mp4";
 import dogsDiffc from "./assets/dogs-diffc.png"
 import dogsTrue from "./assets/dogs-true.png"
 import dogsMsillm from "@/assets/dogs-msillm.jpg"
+import multigoalenv from "./assets/multigoal_new.png"
+import highdimenv from "./assets/new_5_1_scatter.png"
 
-<Video src={outside} />
+{/* <Video src={outside} /> */}
 
 <HighlightedSection>
 
-## Abstract
+## TL;DR
 
-This is a template you can use to create a professional project page for your research paper. [See the code for the template and instructions on how to use it yourself on GitHub](https://github.com/RomanHauksson/academic-project-astro-template). It's made with the [Astro web framework](https://astro.build/) and styled with [Tailwind](https://tailwindcss.com/). You write the content in [MDX](https://mdxjs.com/), which enables markdown formatting like **bold**, _italics_, and ~strikethrough~, as well as custom components like <SmallCaps>small caps.</SmallCaps>
+**FLAG** trains expressive flow policies for MaxEnt-RL through supervised target matching, rather than direct gradient-based policy optimization through the flow.
+ It replaces fragile global importance sampling with latent-conditioned local importance sampling, enabling scalable high-dimensional control and state-of-the-art performance.
+
 
 </HighlightedSection>
 
-## Visuals
+## From Global to Local Importance Sampling
 
-### Picture
+Prior methods train diffusion- and flow-based policies by matching a target action distribution,
+such as the unnormalized MaxEnt target $\exp(Q(s, a) / \alpha)$. Since this target cannot be
+sampled from directly, they use **importance sampling (IS)**: sample actions from a proposal policy,
+reweight them toward the target, and perform weighted score or flow matching.
 
-Use the `Picture` component to display images. If you have a figure in PDF format, you can pass in its path as the `src` prop and it will be converted into a web-friendly image automatically.
+The limitation is that IS can only reweight actions that were already sampled. When the
+proposal-target discrepancy is large, especially in high-dimensional control, the proposal rarely
+samples target-relevant actions. This yields sparse supervision and lead to failure mode.
 
-<Picture src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />
+**Our key insight** is to change where IS is performed. Prior methods use **Global IS**, which reweights samples over the full action space. 
+FLAG uses **Local IS**: it conditions both the proposal and target on the same flow latent variable $z$,
+so reweighting happens inside a shared local region.
 
-### Wide visual
+<ColorBox color="#0F766E" title="Local IS turns global target matching into local target matching">
 
-I constrained the maximum width of the text column to make sure it's readable even when the screen is wide. But images and other visuals should "break out" and take up more horizontal space: for this, try wrapping them in the `Wide` component.
+<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+  <div class="rounded-md border border-zinc-400/60 bg-white/70 p-3">
+    <div class="mb-2 text-xs font-bold tracking-wider text-zinc-600 uppercase">Global IS · prior work</div>
+    <div class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
+      <div class="font-semibold text-zinc-500">Region</div>
+      <div>Full action space</div>
+      <div class="font-semibold text-zinc-500">Samples</div>
+      <div>Useful ones are rarely drawn</div>
+      <div class="font-semibold text-zinc-500">Supervision</div>
+      <div><strong>Weak</strong></div>
+    </div>
+  </div>
+  <div class="rounded-md border-2 border-teal-700/60 bg-teal-100/70 p-3">
+    <div class="mb-2 text-xs font-bold tracking-wider text-teal-800 uppercase">Local IS · FLAG (ours)</div>
+    <div class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
+      <div class="font-semibold text-teal-700">Region</div>
+      <div>Local (latent-conditioned)</div>
+      <div class="font-semibold text-teal-700">Samples</div>
+      <div>Even a few stay informative</div>
+      <div class="font-semibold text-teal-700">Supervision</div>
+      <div><strong>Dense</strong></div>
+    </div>
+  </div>
+</div>
+
+</ColorBox>
+
+We first illustrate this effect in a controlled multi-goal task, then show the same pattern in high-dimensional continuous control.
+
+{/* ### Multi-goal Environment
 
 <Wide>
+  <Figure>
+  <Picture slot="figure" src={multigoalenv} alt="Comparison of global and local importance sampling in a multi-goal environment" />
+  <Fragment slot="caption">This didactic task illustrates what happens when the IS budget is very small, as in high-dimensional action spaces. When $N \le 8$, global-IS baselines fail to capture the target modes, while FLAG captures the optimal multi-modal behavior even with $N = 2$ samples.</Fragment>
+  </Figure>
+</Wide>
+
+### High-dimensional Continuous Control Environment
+<Wide>
+  <Figure>
+  <Picture slot="figure" src={highdimenv} alt="Comparison of global and local importance sampling in a high-dimensional continuous control environment" />
+  <Fragment slot="caption">In real high-dimensional control tasks, global-IS methods often rely on batch action sampling, drawing many candidate actions to compensate for poor proposal-target overlap. Even with this extra sampling, they remain less efficient and lower-performing than FLAG.</Fragment>
+  </Figure>
+</Wide> */}
+
+### Multi-goal Environment (Didactic Experiment)
+
+<Figure>
+  <Wide slot="figure">
+    <Picture src={multigoalenv} alt="Comparison of global and local importance sampling in a multi-goal environment" />
+  </Wide>
+  <Fragment slot="caption">The multi-goal task isolates the small-sample regime: global-IS baselines fail when $N \le 8$, while FLAG recovers the optimal multi-modal behavior with only $N = 2$ samples.</Fragment>
+</Figure>
+
+### High-dimensional Continuous Control Environment
+
+<Figure>
+  <Wide slot="figure">
+    <Picture src={highdimenv} alt="Comparison of global and local importance sampling in a high-dimensional continuous control environment" />
+  </Wide>
+  <Fragment slot="caption">The same issue appears in high-dimensional control. Global-IS methods compensate with batch action sampling, but even with many candidates they remain less efficient and lower-performing than FLAG.</Fragment>
+</Figure>
+
+{/* ### How to Make Local IS Framework Work?
+
+<ColorBox color="#0F766E">
+  <Fragment slot="title">
+    **FLAG realizes local IS through EM on the $z$-MDP.**
+  </Fragment>
+
+The $z$-MDP augments the original MDP with a latent variable while preserving marginal and
+$Q$-function consistency. On this augmented MDP, we define a tractable proxy MaxEnt-RL objective
+whose EM-style optimization induces a localized proposal-target pair conditioned on $z$. FLAG
+instantiates this procedure, enabling the local IS within the localized region of the action space
+and making MaxEnt-RL scalable.
+
+</ColorBox> */}
+
+
+## Q1. How do we construct local IS — and is it consistent with the original MDP?
+
+**Challenge.** Local IS needs (i) a *localized* proposal that stays informative under a small sample budget, and (ii) a guarantee that optimizing in this localized space is equivalent to optimizing in the original MDP. Without (ii), localization buys nothing.
+
+**Key idea.** Wrap a small Gaussian around each flow anchor $T_\theta(s, z)$ so the effective sampling region is localized around the latent $z$. Then *lift* the MDP by treating $z$ as part of the state; we show this lift preserves both state-action marginals and Q-values.
+
+**Local policy.** A flow map $T_\theta(s, z)$ transports a latent $z \sim p_z$ to an anchor action. We attach an isotropic Gaussian to this anchor:
+
+$$
+\hat\pi(a \mid s, z;\,\theta) = \mathcal{N}\bigl(a;\, T_\theta(s,z),\, \Sigma\bigr),
+\qquad
+\pi(a \mid s;\,\theta) = \int p_z(z)\,\hat\pi(a \mid s, z;\,\theta)\,dz.
+$$
+
+**Latent-augmented MDP ($z$-MDP).** Append $z$ to the state, $\hat s = (s, z)$:
+
+$$
+\hat p(\hat s' \mid \hat s, a) = p(s' \mid s, a)\,p_z(z'), \qquad \hat r(\hat s, a) = r(s, a).
+$$
+
+**Consistency.** Two corollaries pin down the equivalence between $z$-MDP and the original MDP. *Marginal consistency* states that $\mathbb E_{\hat\pi}[f(s, a)] = \mathbb E_\pi[f(s, a)]$ for any measurable $f$ (expectations are taken under the discounted state-action marginal), and *Q-function consistency* states that $Q^{\hat\pi}(\hat s, a) = Q^{\pi}(s, a)$ for all $s, z, a$.
+
+{/* [PLACEHOLDER FIGURE: z-MDP lift diagram — original MDP ↔ z-MDP] */}
+
+<ColorBox color="#0F766E" title="Takeaway">
+Optimizing $Q^{\pi}(s, a)$ via the local policy $\hat\pi$ over $\hat s \sim \hat\rho_{\hat\pi}$ is **equivalent** to optimizing the global policy $\pi$ over $s \sim \rho_\pi$. Local IS comes for free from this lift.
+</ColorBox>
+
+
+## Q2. How do we incorporate this into MaxEnt-RL and update the policy?
+
+**Challenge.** The MaxEnt-RL objective requires $\mathcal{H}(\pi)$, but $\pi$ marginalizes $z$ with no closed form. Differentiating through the flow (BPTT) is expensive and unstable.
+
+**Key idea.** Replace $\mathcal{H}(\pi)$ with the **cross-entropy** $\mathcal{H}(\pi, \tilde\pi)$ against the base flow policy $\tilde\pi$ — tractable via the Hutchinson trace estimator, and a valid surrogate when $\Sigma$ is small. Plugged into the $z$-MDP, the EM update collapses to a supervised regression on the flow.
+
+**Cross-entropy as a valid surrogate.** For smooth $\tilde\pi$ and small $\mathrm{tr}(\Sigma)$,
+
+$$
+\mathcal{H}(\pi, \tilde\pi) = \mathcal{H}(\pi) + \mathcal{O}\bigl(\mathrm{tr}(\Sigma)^2\bigr).
+$$
+
+This yields a tractable proxy MaxEnt-RL objective evaluated in the $z$-MDP.
+
+**EM update.** Treating $\tilde\pi_{\theta_k}$ as a fixed reference, define the energy $f_{\hat s, k}(a) := Q^{\pi_k}(s, a) - \alpha \log \tilde\pi_{\theta_k}(a \mid s)$. Then for each $\hat s$:
+
+$$
+\text{(E-step)}\quad q_k(a \mid \hat s) \;\propto\; \hat\pi(a \mid \hat s;\,\theta_k)\,\exp\bigl(f_{\hat s, k}(a)/\lambda\bigr),
+$$
+
+$$
+\text{(M-step)}\quad \theta_{k+1} \;\in\; \arg\min_\theta\; \mathbb E_{(s, z) \sim \hat\rho_{\hat\pi}}\;\| T_\theta(s, z) - \mu_k^*(\hat s) \|^2,
+\quad \mu_k^*(\hat s) := \mathbb E_{q_k}[a].
+$$
+
+The M-step is **moment matching**: $\mu_k^*$ is estimated via self-normalized IS on $N$ Gaussian samples and distilled back into the flow with the CFM objective. The label $\mu_k^*$ acts as a *guiding flag* telling each latent $z$ where to generate.
+
+{/* [PLACEHOLDER FIGURE: fig:4.3 — local moment-matching + distillation diagram] */}
+
+<ColorBox color="#0F766E" title="Takeaway">
+The flow is updated by **supervised regression onto locally improved action labels** — no BPTT through the flow, and no global proposal degeneracy.
+</ColorBox>
+
+
+## Q3. Is this construction theoretically guaranteed to improve the policy?
+
+**Challenge.** Approximate E-step (SNIS) plus approximate M-step (CFM regression) sounds heuristic. Does monotonic improvement still hold?
+
+**Key idea.** Decompose one EM step into three terms: the standard frozen-reward MPO improvement, a drift from the cross-entropy reward as $\theta_k$ changes, and the CFM projection error. The first dominates under mild conditions on $\sigma_k$ and projection error.
+
+**Monotonic improvement.** For sufficiently small step size $\beta$,
+
+$$
+\mathcal{J}_{k+1} - \mathcal{J}_k
+\;\geq\;
+\underbrace{\lambda\beta\,\mathcal{G}_k}_{\text{frozen-reward MPO}}
+\;-\;
+\underbrace{\alpha\, C_\Sigma\, \sigma_k^2\, \beta\,\mathcal{G}_k}_{\text{cross-entropy drift}}
+\;-\;
+\underbrace{\lambda\,\epsilon_k^{\mathrm{proj}}}_{\text{CFM projection error}}
+\;+\; \mathcal{O}(\beta^2).
+$$
+
+The guarantee holds whenever $\lambda > \alpha\,C_\Sigma\,\sigma_k^2$ and $\epsilon_k^{\mathrm{proj}}$ is small.
+
+{/* [PLACEHOLDER FIGURE: fig:flag-mpo-flow — three-term decomposition / proof sketch] */}
+
+<ColorBox color="#0F766E" title="Takeaway">
+Monotonic improvement is conditional on **two practical knobs**: keeping $\sigma_k$ small, and keeping the CFM projection error small. Q4 shows how the implementation enforces both.
+</ColorBox>
+
+
+## Q4. Do the heuristic design choices satisfy the conditions in practice?
+
+**Challenge.** Theorem in Q3 gives abstract sufficient conditions. We need (i) implementation choices that *map onto* those conditions, and (ii) empirical evidence that the resulting algorithm works.
+
+**Each design choice targets a specific term.**
+
+- *Covariance scheduling.* Anneal $\sigma_k$ from $\sigma_{\mathrm{init}}$ to a small $\sigma_{\mathrm{final}}$ — directly shrinks the $\alpha\,C_\Sigma\,\sigma_k^2$ drift term.
+- *Effective temperature.* Fix a reference $\lambda_{\mathrm{ref}}$ and use $\lambda = \alpha\,\lambda_{\mathrm{ref}}$. This reduces the sufficient condition to $\lambda_{\mathrm{ref}} > C_\Sigma\,\sigma_k^2$ and avoids dual-Lagrangian instability between $\alpha$ and $\lambda$.
+- *Guidance buffer.* Cache recent improved labels $\mu_k^*$ and reuse them across off-policy updates — provides dense supervision that keeps $\epsilon_k^{\mathrm{proj}}$ small in practice.
+- *Autotuned $\alpha$.* Adapt the entropy scaling via $\mathcal{L}(\alpha) = \alpha\bigl(\mathcal{H}(\pi, \tilde\pi) - \mathcal{H}_{\mathrm{target}}\bigr)$.
+
+**Ablation.** {/* [PLACEHOLDER TABLE/FIGURE: per-choice ablation — removing each design knob hurts the corresponding theoretical term] */}
+
+<ColorBox color="#0F766E" title="Takeaway">
+Each implementation choice **targets a specific term in the improvement bound**. Together, they translate the theoretical sufficient conditions into a practical algorithm.
+</ColorBox>
+
+{/* <Wide>
   <Picture src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />
 </Wide>
 
@@ -105,7 +311,7 @@ Use the `Comparison` component to compare two visuals with an interactive slider
 <Comparison client:idle >
   <Picture slot="itemOne" src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />
   <Picture slot="itemTwo" src={dogsTrue} alt="True photo of two dogs running side-by-side in shallow water" />
-</Comparison>
+</Comparison> */}
 
 ### Tab panels
 
