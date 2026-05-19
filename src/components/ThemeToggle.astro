@@ -1,0 +1,104 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<button
+  id="theme-toggle"
+  class="not-prose fixed top-4 right-4 z-50 flex h-11 items-center justify-center gap-2 rounded-full border border-zinc-300/80 bg-white/85 px-3 text-sm font-medium whitespace-nowrap text-zinc-800 shadow-sm backdrop-blur transition hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:border-zinc-700/80 dark:bg-zinc-900/85 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-900"
+  type="button"
+  aria-label="Switch to dark mode"
+  title="Switch to dark mode"
+>
+  <span class="theme-toggle-light flex items-center gap-1.5">
+    <Icon class="h-5 w-5" name="ri:sun-line" aria-hidden="true" />
+    <span>Dark</span>
+  </span>
+  <span class="theme-toggle-dark hidden items-center gap-1.5">
+    <Icon class="h-5 w-5" name="ri:moon-line" aria-hidden="true" />
+    <span>Light</span>
+  </span>
+</button>
+
+<script>
+  const storageKey = "flag-theme";
+  const root = document.documentElement;
+  const button = document.getElementById(
+    "theme-toggle",
+  ) as HTMLButtonElement | null;
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function getStoredTheme() {
+    try {
+      const storedTheme = window.localStorage.getItem(storageKey);
+      return storedTheme === "dark" || storedTheme === "light"
+        ? storedTheme
+        : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveTheme(theme: "dark" | "light") {
+    try {
+      window.localStorage.setItem(storageKey, theme);
+    } catch {
+      return;
+    }
+  }
+
+  function getEffectiveTheme() {
+    const theme = root.dataset.theme;
+
+    if (theme === "dark" || theme === "light") {
+      return theme;
+    }
+
+    return mediaQuery.matches ? "dark" : "light";
+  }
+
+  function updateButton(theme: "dark" | "light") {
+    if (!button) {
+      return;
+    }
+
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    const nextThemeLabel = nextTheme === "dark" ? "dark" : "light";
+
+    button.setAttribute("aria-label", `Switch to ${nextThemeLabel} mode`);
+    button.setAttribute("title", `Switch to ${nextThemeLabel} mode`);
+    button
+      .querySelector(".theme-toggle-light")
+      ?.classList.toggle("hidden", theme === "dark");
+    button
+      .querySelector(".theme-toggle-light")
+      ?.classList.toggle("flex", theme === "light");
+    button
+      .querySelector(".theme-toggle-dark")
+      ?.classList.toggle("hidden", theme === "light");
+    button
+      .querySelector(".theme-toggle-dark")
+      ?.classList.toggle("flex", theme === "dark");
+  }
+
+  const storedTheme = getStoredTheme();
+
+  if (storedTheme) {
+    root.dataset.theme = storedTheme;
+  }
+
+  updateButton(getEffectiveTheme());
+
+  button?.addEventListener("click", () => {
+    const nextTheme = getEffectiveTheme() === "dark" ? "light" : "dark";
+
+    root.dataset.theme = nextTheme;
+    saveTheme(nextTheme);
+    updateButton(nextTheme);
+  });
+
+  mediaQuery.addEventListener("change", () => {
+    if (!getStoredTheme() && root.dataset.theme === "device") {
+      updateButton(getEffectiveTheme());
+    }
+  });
+</script>

@@ -66,6 +66,7 @@ import CarouselSlide from "./components/CarouselSlide.astro";
 import Wide from "./components/Wide.astro";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/starwind/tabs";
 import { Comparison } from "./components/Comparison.tsx";
+import QCard from "./components/QCard.astro";
 
 import outside from "./assets/outside.mp4";
 import dogsDiffc from "./assets/dogs-diffc.png"
@@ -73,6 +74,9 @@ import dogsTrue from "./assets/dogs-true.png"
 import dogsMsillm from "@/assets/dogs-msillm.jpg"
 import multigoalenv from "./assets/multigoal_new.png"
 import highdimenv from "./assets/new_5_1_scatter.png"
+import localizedEM from "./assets/localized_EM_algorithm.png"
+import mpoProof from "./assets/MPO_proof.png"
+import sacProof from "./assets/SAC_proof.png"
 
 {/* <Video src={outside} /> */}
 
@@ -152,18 +156,14 @@ We first illustrate this effect in a controlled multi-goal task, then show the s
 ### Multi-goal Environment (Didactic Experiment)
 
 <Figure>
-  <Wide slot="figure">
-    <Picture src={multigoalenv} alt="Comparison of global and local importance sampling in a multi-goal environment" />
-  </Wide>
+  <Picture slot="figure" src={multigoalenv} alt="Comparison of global and local importance sampling in a multi-goal environment" />
   <Fragment slot="caption">The multi-goal task isolates the small-sample regime: global-IS baselines fail when $N \le 8$, while FLAG recovers the optimal multi-modal behavior with only $N = 2$ samples.</Fragment>
 </Figure>
 
 ### High-dimensional Continuous Control Environment
 
 <Figure>
-  <Wide slot="figure">
-    <Picture src={highdimenv} alt="Comparison of global and local importance sampling in a high-dimensional continuous control environment" />
-  </Wide>
+  <Picture slot="figure" src={highdimenv} alt="Comparison of global and local importance sampling in a high-dimensional continuous control environment" />
   <Fragment slot="caption">The same issue appears in high-dimensional control. Global-IS methods compensate with batch action sampling, but even with many candidates they remain less efficient and lower-performing than FLAG.</Fragment>
 </Figure>
 
@@ -182,114 +182,155 @@ and making MaxEnt-RL scalable.
 
 </ColorBox> */}
 
-
-## Q1. How do we construct local IS — and is it consistent with the original MDP?
-
-**Challenge.** Local IS needs (i) a *localized* proposal that stays informative under a small sample budget, and (ii) a guarantee that optimizing in this localized space is equivalent to optimizing in the original MDP. Without (ii), localization buys nothing.
-
-**Key idea.** Wrap a small Gaussian around each flow anchor $T_\theta(s, z)$ so the effective sampling region is localized around the latent $z$. Then *lift* the MDP by treating $z$ as part of the state; we show this lift preserves both state-action marginals and Q-values.
-
-**Local policy.** A flow map $T_\theta(s, z)$ transports a latent $z \sim p_z$ to an anchor action. We attach an isotropic Gaussian to this anchor:
-
-$$
-\hat\pi(a \mid s, z;\,\theta) = \mathcal{N}\bigl(a;\, T_\theta(s,z),\, \Sigma\bigr),
-\qquad
-\pi(a \mid s;\,\theta) = \int p_z(z)\,\hat\pi(a \mid s, z;\,\theta)\,dz.
-$$
-
-**Latent-augmented MDP ($z$-MDP).** Append $z$ to the state, $\hat s = (s, z)$:
-
-$$
-\hat p(\hat s' \mid \hat s, a) = p(s' \mid s, a)\,p_z(z'), \qquad \hat r(\hat s, a) = r(s, a).
-$$
-
-**Consistency.** Two corollaries pin down the equivalence between $z$-MDP and the original MDP. *Marginal consistency* states that $\mathbb E_{\hat\pi}[f(s, a)] = \mathbb E_\pi[f(s, a)]$ for any measurable $f$ (expectations are taken under the discounted state-action marginal), and *Q-function consistency* states that $Q^{\hat\pi}(\hat s, a) = Q^{\pi}(s, a)$ for all $s, z, a$.
-
-{/* [PLACEHOLDER FIGURE: z-MDP lift diagram — original MDP ↔ z-MDP] */}
-
-<ColorBox color="#0F766E" title="Takeaway">
-Optimizing $Q^{\pi}(s, a)$ via the local policy $\hat\pi$ over $\hat s \sim \hat\rho_{\hat\pi}$ is **equivalent** to optimizing the global policy $\pi$ over $s \sim \rho_\pi$. Local IS comes for free from this lift.
-</ColorBox>
+<Wide>
+## Method
 
 
-## Q2. How do we incorporate this into MaxEnt-RL and update the policy?
 
-**Challenge.** The MaxEnt-RL objective requires $\mathcal{H}(\pi)$, but $\pi$ marginalizes $z$ with no closed form. Differentiating through the flow (BPTT) is expensive and unstable.
+<div class="not-prose my-4 flex flex-wrap items-center gap-x-2 gap-y-2 text-xs text-zinc-500">
+  <span class="font-semibold uppercase tracking-wider text-zinc-600">Each card walks through</span>
+  <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-red-700">
+    <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span>Challenge
+  </span>
+  <span class="text-zinc-400">→</span>
+  <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-blue-700">
+    <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>Solution
+  </span>
+  <span class="text-zinc-400">→</span>
+  <span class="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-teal-700">
+    <span class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>Bottom Line
+  </span>
+</div>
 
-**Key idea.** Replace $\mathcal{H}(\pi)$ with the **cross-entropy** $\mathcal{H}(\pi, \tilde\pi)$ against the base flow policy $\tilde\pi$ — tractable via the Hutchinson trace estimator, and a valid surrogate when $\Sigma$ is small. Plugged into the $z$-MDP, the EM update collapses to a supervised regression on the flow.
+<QCard number="Q1" title="How do we construct local IS, and is it consistent with the original MDP?">
 
-**Cross-entropy as a valid surrogate.** For smooth $\tilde\pi$ and small $\mathrm{tr}(\Sigma)$,
+<Fragment slot="challenge">
+For local IS to be principled — not just a trick — two conditions must hold:
 
-$$
-\mathcal{H}(\pi, \tilde\pi) = \mathcal{H}(\pi) + \mathcal{O}\bigl(\mathrm{tr}(\Sigma)^2\bigr).
-$$
+- **Localization.** The proposal and target distributions must share a *region* indexed by a latent $z$.
+- **Consistency.** Optimizing inside that local region must be the *same* optimization problem as optimizing the RL objective in the original MDP.
 
-This yields a tractable proxy MaxEnt-RL objective evaluated in the $z$-MDP.
+Without Consistency, local IS optimizes the wrong objective and any gains are illusory.
+</Fragment>
 
-**EM update.** Treating $\tilde\pi_{\theta_k}$ as a fixed reference, define the energy $f_{\hat s, k}(a) := Q^{\pi_k}(s, a) - \alpha \log \tilde\pi_{\theta_k}(a \mid s)$. Then for each $\hat s$:
+<Fragment slot="solution">
+**Idea.** Wrap a small Gaussian around each flow output $T_\theta(s, z)$ — the effective sampling region is automatically localized around the latent. Then *lift* the MDP by treating $z$ as part of the state (the **z-MDP**). This lift preserves both the state–action marginals and the Q-function, so optimizing on the z-MDP is the *same* problem as optimizing on the original MDP.
 
-$$
-\text{(E-step)}\quad q_k(a \mid \hat s) \;\propto\; \hat\pi(a \mid \hat s;\,\theta_k)\,\exp\bigl(f_{\hat s, k}(a)/\lambda\bigr),
-$$
+$$\pi(a \mid s) \;=\; \int p_z(z)\,\hat\pi(a \mid s, z)\,dz, \qquad \hat\pi(a \mid s, z) = \mathcal{N}\bigl(T_\theta(s, z),\,\Sigma\bigr).$$
 
-$$
-\text{(M-step)}\quad \theta_{k+1} \;\in\; \arg\min_\theta\; \mathbb E_{(s, z) \sim \hat\rho_{\hat\pi}}\;\| T_\theta(s, z) - \mu_k^*(\hat s) \|^2,
-\quad \mu_k^*(\hat s) := \mathbb E_{q_k}[a].
-$$
+Full proofs of marginal and Q-function consistency (Corollaries 4.2, 4.4) are in the paper.
 
-The M-step is **moment matching**: $\mu_k^*$ is estimated via self-normalized IS on $N$ Gaussian samples and distilled back into the flow with the CFM objective. The label $\mu_k^*$ acts as a *guiding flag* telling each latent $z$ where to generate.
+<Tabs defaultValue="policy">
+  <TabsList>
+    <TabsTrigger value="policy">Policy parameterization</TabsTrigger>
+    <TabsTrigger value="zmdp">Latent-augmented MDP</TabsTrigger>
+  </TabsList>
+  <TabsContent value="policy">
+    <Figure>
+      <Picture slot="figure" src="../assets/policy_parameterization_v2.pdf" alt="Flow map transports latent z to multi-modal anchor actions, around which local Gaussians form the local policy and marginalize into the global policy" />
+      <Fragment slot="caption">The deterministic flow map $T_\theta(s, z)$ transports a latent prior $z \sim p_z$ to multi-modal anchor actions. Wrapping each anchor with a small Gaussian gives a tractable *local* density $\hat\pi(a \mid s, z)$; the global policy $\pi(a \mid s)$ is recovered as a marginal over $z$.</Fragment>
+    </Figure>
+  </TabsContent>
+  <TabsContent value="zmdp">
+    <Figure>
+      <Picture slot="figure" src="../assets/z_MDP_v2.pdf" alt="Graphical model of the latent-augmented MDP showing the local-policy path (red), the global-policy marginalization (blue), and the environment dynamics (black)" />
+      <Fragment slot="caption">The z-MDP appends the latent $z$ to the state. The local policy path (red) generates an anchor $\tilde a$ from $(s, z, \theta)$; the global policy path (blue) marginalizes the local Gaussian around $\tilde a$ to produce the executed action $a$. Marginal and Q-function consistency mean both views optimize the same RL objective.</Fragment>
+    </Figure>
+  </TabsContent>
+</Tabs>
+</Fragment>
 
-{/* [PLACEHOLDER FIGURE: fig:4.3 — local moment-matching + distillation diagram] */}
+<Fragment slot="bottom-line">
+We construct the **z-MDP**, and prove that optimizing the RL objective on the z-MDP is **equivalent** to optimizing it on the original MDP (**Consistency**). Local IS becomes principled, not a heuristic.
+</Fragment>
 
-<ColorBox color="#0F766E" title="Takeaway">
-The flow is updated by **supervised regression onto locally improved action labels** — no BPTT through the flow, and no global proposal degeneracy.
-</ColorBox>
+</QCard>
 
+<QCard number="Q2" title="How do we incorporate this into MaxEnt-RL and update the policy?">
 
-## Q3. Is this construction theoretically guaranteed to improve the policy?
+<Fragment slot="challenge">
+Three things stand in the way of plugging the z-MDP into MaxEnt-RL:
 
-**Challenge.** Approximate E-step (SNIS) plus approximate M-step (CFM regression) sounds heuristic. Does monotonic improvement still hold?
+- The MaxEnt entropy $\mathcal{H}(\pi)$ requires marginalizing over $z$ — **no closed form**.
+- Backpropagating through the flow ODE (BPTT) is **expensive and numerically unstable**.
+- We need a surrogate that is (i) tractable to evaluate and (ii) avoids differentiating through the flow.
+</Fragment>
 
-**Key idea.** Decompose one EM step into three terms: the standard frozen-reward MPO improvement, a drift from the cross-entropy reward as $\theta_k$ changes, and the CFM projection error. The first dominates under mild conditions on $\sigma_k$ and projection error.
+<Fragment slot="solution">
+**Idea.** Replace the entropy $\mathcal{H}(\pi)$ with the **cross-entropy** $\mathcal{H}(\pi, \tilde\pi)$ against the base flow $\tilde\pi$ — tractable via the Hutchinson trace estimator, and a valid surrogate whenever the local covariance is small (Proposition 4.3 in the paper). On the z-MDP, the resulting EM update collapses into two simple steps:
 
-**Monotonic improvement.** For sufficiently small step size $\beta$,
+- **E-step** — a local Boltzmann tilt of the Gaussian proposal around each anchor.
+- **M-step** — supervised regression of the flow onto improved action labels $\mu_k^*$, estimated by SNIS over $N$ local samples. **No BPTT.**
 
-$$
-\mathcal{J}_{k+1} - \mathcal{J}_k
-\;\geq\;
-\underbrace{\lambda\beta\,\mathcal{G}_k}_{\text{frozen-reward MPO}}
-\;-\;
-\underbrace{\alpha\, C_\Sigma\, \sigma_k^2\, \beta\,\mathcal{G}_k}_{\text{cross-entropy drift}}
-\;-\;
-\underbrace{\lambda\,\epsilon_k^{\mathrm{proj}}}_{\text{CFM projection error}}
-\;+\; \mathcal{O}(\beta^2).
-$$
+<Tabs defaultValue="ce">
+  <TabsList>
+    <TabsTrigger value="ce">Cross-entropy surrogate</TabsTrigger>
+    <TabsTrigger value="em">Localized EM</TabsTrigger>
+  </TabsList>
+  <TabsContent value="ce">
+    <Figure>
+      <Picture slot="figure" src="../assets/Proposition_4_3.pdf" alt="Proposition 4.3 stating that the cross-entropy between the global policy and the base flow converges to the true entropy as the local variance shrinks" />
+      <Fragment slot="caption">As the local variance $\mathrm{tr}(\Sigma)$ shrinks, the cross-entropy $\mathcal{H}(\pi, \tilde\pi)$ collapses to the true entropy $\mathcal{H}(\pi)$ at second order. The intractable MaxEnt entropy can therefore be replaced by a tractable cross-entropy against the base flow with controlled error.</Fragment>
+    </Figure>
+  </TabsContent>
+  <TabsContent value="em">
+    <Figure>
+      <Picture slot="figure" src={localizedEM} alt="Per-latent local Gaussians are nudged toward the Q-weighted target within their local region and distilled back into the flow via CFM" />
+      <Fragment slot="caption">Each local Gaussian (cyan) is nudged toward the Q-weighted target *inside its own local region*, and these locally improved targets are distilled back into the flow via CFM. Supervision stays dense even when $N$ is tiny, since the proposal and target always overlap.</Fragment>
+    </Figure>
+  </TabsContent>
+</Tabs>
+</Fragment>
 
-The guarantee holds whenever $\lambda > \alpha\,C_\Sigma\,\sigma_k^2$ and $\epsilon_k^{\mathrm{proj}}$ is small.
+<Fragment slot="bottom-line">
+We use the **cross-entropy as a tractable entropy surrogate** and update the flow via an **EM algorithm on the z-MDP** — supervised distillation onto locally improved labels, *not* gradient-through-flow.
+</Fragment>
 
-{/* [PLACEHOLDER FIGURE: fig:flag-mpo-flow — three-term decomposition / proof sketch] */}
+</QCard>
 
-<ColorBox color="#0F766E" title="Takeaway">
-Monotonic improvement is conditional on **two practical knobs**: keeping $\sigma_k$ small, and keeping the CFM projection error small. Q4 shows how the implementation enforces both.
-</ColorBox>
+<QCard number="Q3" title="Is this construction theoretically guaranteed to improve the policy?">
 
+<Fragment slot="challenge">
+Both halves of the update are approximate:
 
-## Q4. Do the heuristic design choices satisfy the conditions in practice?
+- The E-step uses **SNIS** with a finite sample budget.
+- The M-step uses **CFM regression** to project the improved labels back into the flow.
 
-**Challenge.** Theorem in Q3 gives abstract sufficient conditions. We need (i) implementation choices that *map onto* those conditions, and (ii) empirical evidence that the resulting algorithm works.
+Two questions follow: does monotonic improvement still hold? And does the guarantee survive scrutiny from *both* the MPO (variational) and SAC (reparameterization) perspectives that the RL community cares about?
+</Fragment>
 
-**Each design choice targets a specific term.**
+<Fragment slot="solution">
+**Idea.** One FLAG step decomposes into three pieces: a positive MPO improvement, a *cross-entropy drift* from $\theta_k$ changing across iterations, and the CFM projection error. Under a small step size and small $\sigma_k$, the MPO term dominates → **monotonic improvement** (Theorem 4.5).
 
-- *Covariance scheduling.* Anneal $\sigma_k$ from $\sigma_{\mathrm{init}}$ to a small $\sigma_{\mathrm{final}}$ — directly shrinks the $\alpha\,C_\Sigma\,\sigma_k^2$ drift term.
-- *Effective temperature.* Fix a reference $\lambda_{\mathrm{ref}}$ and use $\lambda = \alpha\,\lambda_{\mathrm{ref}}$. This reduces the sufficient condition to $\lambda_{\mathrm{ref}} > C_\Sigma\,\sigma_k^2$ and avoids dual-Lagrangian instability between $\alpha$ and $\lambda$.
-- *Guidance buffer.* Cache recent improved labels $\mu_k^*$ and reuse them across off-policy updates — provides dense supervision that keeps $\epsilon_k^{\mathrm{proj}}$ small in practice.
-- *Autotuned $\alpha$.* Adapt the entropy scaling via $\mathcal{L}(\alpha) = \alpha\bigl(\mathcal{H}(\pi, \tilde\pi) - \mathcal{H}_{\mathrm{target}}\bigr)$.
+A complementary **SAC perspective** shows that the moment-matching target $\mu_k^*$ approximates the SAC reparameterization-gradient direction via a log-sum-exp identity — so FLAG inherits soft policy improvement without ever backpropagating through the flow ODE.
 
-**Ablation.** {/* [PLACEHOLDER TABLE/FIGURE: per-choice ablation — removing each design knob hurts the corresponding theoretical term] */}
+<Tabs defaultValue="mpo">
+  <TabsList>
+    <TabsTrigger value="mpo">MPO perspective</TabsTrigger>
+    <TabsTrigger value="sac">SAC perspective</TabsTrigger>
+  </TabsList>
+  <TabsContent value="mpo">
+    <Figure>
+      <Picture slot="figure" src={mpoProof} alt="Decomposition of one FLAG step into MPO improvement, cross-entropy drift, and CFM projection error, with each implementation knob controlling the corresponding term" />
+      <Fragment slot="caption">From the variational MPO view, one FLAG step decomposes into a positive improvement term, a cross-entropy drift bounded by $\sigma_k^2$, and a CFM projection error $\epsilon_k^{\mathrm{proj}}$. Each implementation knob — covariance scheduling, guidance buffer — directly suppresses one of the error terms.</Fragment>
+    </Figure>
+  </TabsContent>
+  <TabsContent value="sac">
+    <Figure>
+      <Picture slot="figure" src={sacProof} alt="Derivation showing the moment-matching update recovers the SAC reparameterization-gradient direction without backpropagating through the flow ODE" />
+      <Fragment slot="caption">From the SAC view, the moment-matching target $\mu_k^*$ recovers the same descent direction that SAC obtains via the reparameterization trick — but evaluated through a zeroth-order log-sum-exp identity, so the flow ODE is never differentiated through.</Fragment>
+    </Figure>
+  </TabsContent>
+</Tabs>
+</Fragment>
 
-<ColorBox color="#0F766E" title="Takeaway">
-Each implementation choice **targets a specific term in the improvement bound**. Together, they translate the theoretical sufficient conditions into a practical algorithm.
-</ColorBox>
+<Fragment slot="bottom-line">
+Monotonic improvement is established from **two complementary perspectives — MPO (variational) and SAC (reparameterization)** — without ever differentiating through the flow ODE.
+</Fragment>
+
+</QCard>
+
+</Wide>
 
 {/* <Wide>
   <Picture src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />

@@ -1,0 +1,151 @@
+---
+interface Props {
+  number: string;
+  title: string;
+}
+const { number, title } = Astro.props;
+---
+
+<details
+  open
+  class="qcard not-prose group my-3 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-shadow duration-200 open:shadow-md"
+>
+  <summary
+    class="flex w-full cursor-pointer list-none items-center gap-4 px-5 py-4 transition-colors duration-150 hover:bg-zinc-50 [&::-webkit-details-marker]:hidden"
+  >
+    <span
+      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-700 text-sm font-bold text-white"
+      >{number}</span
+    >
+    <span class="flex-1 text-sm font-semibold text-zinc-800 md:text-base"
+      >{title}</span
+    >
+    <svg
+      class="h-5 w-5 shrink-0 transition-transform duration-300 group-open:rotate-180"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </summary>
+
+  <div class="border-t border-zinc-100 px-5 pb-5 pt-4">
+    {/* Tab bar */}
+    <div class="qcard-tabs mb-4 flex flex-wrap gap-2">
+      <button
+        type="button"
+        data-target="challenge"
+        class="qcard-tab flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-red-700 shadow-sm transition-all"
+        data-active="true"
+      >
+        <span class="dot inline-block h-1.5 w-1.5 rounded-full bg-red-400"></span>
+        Challenge
+      </button>
+      <button
+        type="button"
+        data-target="solution"
+        class="qcard-tab flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-400 transition-all hover:border-zinc-300 hover:text-zinc-600"
+        data-active="false"
+      >
+        <span class="dot inline-block h-1.5 w-1.5 rounded-full bg-zinc-300"></span>
+        Solution
+      </button>
+      <button
+        type="button"
+        data-target="bottom-line"
+        class="qcard-tab flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-400 transition-all hover:border-zinc-300 hover:text-zinc-600"
+        data-active="false"
+      >
+        <span class="dot inline-block h-1.5 w-1.5 rounded-full bg-zinc-300"></span>
+        Bottom Line
+      </button>
+    </div>
+
+    {/* Step panels — only one visible at a time */}
+    <div data-panel="challenge" class="qcard-panel rounded-lg border border-red-200 bg-red-50 p-4">
+      <div class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-red-700">
+        <span class="inline-block h-2 w-2 rounded-full bg-red-400"></span>
+        Challenge
+      </div>
+      <div class="text-sm leading-relaxed text-zinc-800 [&_p]:my-1 [&_ul]:my-1 [&_li]:my-0.5">
+        <slot name="challenge" />
+      </div>
+    </div>
+
+    <div data-panel="solution" class="qcard-panel hidden rounded-lg border border-blue-200 bg-blue-50 p-4">
+      <div class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-700">
+        <span class="inline-block h-2 w-2 rounded-full bg-blue-400"></span>
+        Solution
+      </div>
+      <div class="text-sm leading-relaxed text-zinc-800 [&_p]:my-1 [&_ul]:my-1 [&_li]:my-0.5">
+        <slot name="solution" />
+      </div>
+    </div>
+
+    <div data-panel="bottom-line" class="qcard-panel hidden rounded-lg border border-teal-200 bg-teal-50 p-4">
+      <div class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-teal-700">
+        <span class="inline-block h-2 w-2 rounded-full bg-teal-500"></span>
+        Bottom Line
+      </div>
+      <div class="text-sm leading-relaxed text-zinc-800 [&_p]:my-1 [&_ul]:my-1 [&_li]:my-0.5">
+        <slot name="bottom-line" />
+      </div>
+    </div>
+  </div>
+</details>
+
+<script>
+  type Key = "challenge" | "solution" | "bottom-line";
+
+  const STYLES: Record<Key, { active: string; dot: string }> = {
+    challenge: {
+      active: "border-red-200 bg-red-50 text-red-700 shadow-sm",
+      dot: "bg-red-400",
+    },
+    solution: {
+      active: "border-blue-200 bg-blue-50 text-blue-700 shadow-sm",
+      dot: "bg-blue-400",
+    },
+    "bottom-line": {
+      active: "border-teal-200 bg-teal-50 text-teal-700 shadow-sm",
+      dot: "bg-teal-500",
+    },
+  };
+
+  const INACTIVE =
+    "border-zinc-200 bg-white text-zinc-400 hover:border-zinc-300 hover:text-zinc-600";
+
+  document.querySelectorAll<HTMLElement>(".qcard").forEach((card) => {
+    const tabs = card.querySelectorAll<HTMLButtonElement>(".qcard-tab");
+    const panels = card.querySelectorAll<HTMLElement>(".qcard-panel");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const target = tab.dataset.target as Key;
+
+        tabs.forEach((t) => {
+          const key = t.dataset.target as Key;
+          const isActive = t === tab;
+          t.className =
+            "qcard-tab flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all " +
+            (isActive ? STYLES[key].active : INACTIVE);
+          const dot = t.querySelector<HTMLElement>(".dot");
+          if (dot) {
+            dot.className =
+              "dot inline-block h-1.5 w-1.5 rounded-full " +
+              (isActive ? STYLES[key].dot : "bg-zinc-300");
+          }
+        });
+
+        panels.forEach((p) => {
+          if (p.dataset.panel === target) p.classList.remove("hidden");
+          else p.classList.add("hidden");
+        });
+      });
+    });
+  });
+</script>

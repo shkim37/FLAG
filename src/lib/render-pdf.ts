@@ -8,7 +8,7 @@ export async function renderPDF(inputFilePath: string): Promise<ImageMetadata> {
 
   // Convert PDF to image with 4x scale (matching previous implementation)
   const document = await pdf(fullPath, {
-    scale: 2,
+    scale: 4,
   });
 
   // Get the first page

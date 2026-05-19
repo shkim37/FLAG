@@ -4,6 +4,7 @@ import { Font } from "astro:assets";
 import Links from "../components/Links.astro";
 import Authors from "../components/Authors.astro";
 import Notes from "../components/Notes.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
 import type { Author, NoteGroup, Link } from "../types/types";
 
 import Table from "../components/Table.astro";
@@ -64,11 +65,26 @@ const titlePlain = titleDisplay.replace(/\n+/g, " ");
       preload={[{ subset: "latin", style: "normal" }]}
     />
 
+    <script is:inline>
+      (() => {
+        try {
+          const theme = window.localStorage.getItem("flag-theme");
+
+          if (theme === "light" || theme === "dark") {
+            document.documentElement.dataset.theme = theme;
+          }
+        } catch {
+          return;
+        }
+      })();
+    </script>
+
     <title>{titlePlain}</title>
   </head>
   <body
     class="prose prose-lg prose-zinc dark:prose-invert prose-a:text-blue-500 prose-a:dark:text-blue-300 prose-a:no-underline prose-a:hover:underline prose-a:font-normal prose-code:bg-zinc-200 prose-code:dark:bg-zinc-800 prose-code:text-zinc-800 prose-code:dark:text-zinc-200 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-medium prose-code:before:content-none prose-code:after:content-none max-w-none pt-16 pb-6 font-(family-name:--font-noto-sans)"
   >
+    <ThemeToggle />
     <header class="mx-auto mb-12 max-w-[50rem] px-6 text-center">
       <h1 class="text-5xl font-bold whitespace-pre-line">{titleDisplay}</h1>
       <div class="flex flex-col items-center gap-6">
