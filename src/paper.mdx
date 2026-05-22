@@ -227,13 +227,13 @@ Full proofs of marginal and Q-function consistency (Corollaries 4.2, 4.4) are in
   </TabsList>
   <TabsContent value="policy">
     <Figure>
-      <Picture slot="figure" src="../assets/policy_parameterization_v2.pdf" alt="Flow map transports latent z to multi-modal anchor actions, around which local Gaussians form the local policy and marginalize into the global policy" />
+      <Picture slot="figure" src="../assets/policy_parameterization.pdf" alt="Flow map transports latent z to multi-modal anchor actions, around which local Gaussians form the local policy and marginalize into the global policy" />
       <Fragment slot="caption">The deterministic flow map $T_\theta(s, z)$ transports a latent prior $z \sim p_z$ to multi-modal anchor actions. Wrapping each anchor with a small Gaussian gives a tractable *local* density $\hat\pi(a \mid s, z)$; the global policy $\pi(a \mid s)$ is recovered as a marginal over $z$.</Fragment>
     </Figure>
   </TabsContent>
   <TabsContent value="zmdp">
     <Figure>
-      <Picture slot="figure" src="../assets/z_MDP_v2.pdf" alt="Graphical model of the latent-augmented MDP showing the local-policy path (red), the global-policy marginalization (blue), and the environment dynamics (black)" />
+      <Picture slot="figure" src="../assets/zMDP.pdf" alt="Graphical model of the latent-augmented MDP showing the local-policy path (red), the global-policy marginalization (blue), and the environment dynamics (black)" />
       <Fragment slot="caption">The z-MDP appends the latent $z$ to the state. The local policy path (red) generates an anchor $\tilde a$ from $(s, z, \theta)$; the global policy path (blue) marginalizes the local Gaussian around $\tilde a$ to produce the executed action $a$. Marginal and Q-function consistency mean both views optimize the same RL objective.</Fragment>
     </Figure>
   </TabsContent>
