@@ -4,7 +4,7 @@ title: |
   Latent Augmented Guidance
 authors:
   - name: Sungha Kim
-    # url: https://roman.technology
+    url: https://shkim37.github.io/
     notes: ["*", "1"]
   - name: Gawon Lee
     notes: ["*", "1"]
@@ -67,6 +67,7 @@ import Wide from "./components/Wide.astro";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/starwind/tabs";
 import { Comparison } from "./components/Comparison.tsx";
 import QCard from "./components/QCard.astro";
+import IdeaTabs from "./components/IdeaTabs.astro";
 
 import outside from "./assets/outside.mp4";
 import dogsDiffc from "./assets/dogs-diffc.png"
@@ -182,23 +183,22 @@ and making MaxEnt-RL scalable.
 
 </ColorBox> */}
 
-<Wide>
 ## Method
 
 
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-x-2 gap-y-2 text-xs text-zinc-500">
-  <span class="font-semibold uppercase tracking-wider text-zinc-600">Each card walks through</span>
-  <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-red-700">
-    <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span>Challenge
+<div class="not-prose my-4 flex flex-wrap items-center gap-x-2 gap-y-2 text-xs text-zinc-500 dark:text-zinc-400">
+  <span class="font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-300">Each card walks through</span>
+  <span class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-red-700 dark:border-rose-700/40 dark:bg-rose-950/50 dark:text-rose-300">
+    <span class="h-1.5 w-1.5 rounded-full bg-red-400 dark:bg-rose-400"></span>Challenge
   </span>
-  <span class="text-zinc-400">→</span>
-  <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-blue-700">
-    <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>Solution
+  <span class="text-zinc-400 dark:text-zinc-500">→</span>
+  <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-blue-700 dark:border-sky-700/40 dark:bg-sky-950/50 dark:text-sky-300">
+    <span class="h-1.5 w-1.5 rounded-full bg-blue-400 dark:bg-sky-400"></span>Solution
   </span>
-  <span class="text-zinc-400">→</span>
-  <span class="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-teal-700">
-    <span class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>Bottom Line
+  <span class="text-zinc-400 dark:text-zinc-500">→</span>
+  <span class="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-teal-700 dark:border-emerald-700/40 dark:bg-emerald-950/50 dark:text-emerald-300">
+    <span class="h-1.5 w-1.5 rounded-full bg-teal-500 dark:bg-emerald-400"></span>Bottom Line
   </span>
 </div>
 
@@ -214,30 +214,33 @@ Without Consistency, local IS optimizes the wrong objective and any gains are il
 </Fragment>
 
 <Fragment slot="solution">
-**Idea.** Wrap a small Gaussian around each flow output $T_\theta(s, z)$ — the effective sampling region is automatically localized around the latent. Then *lift* the MDP by treating $z$ as part of the state (the **z-MDP**). This lift preserves both the state–action marginals and the Q-function, so optimizing on the z-MDP is the *same* problem as optimizing on the original MDP.
+<IdeaTabs labels={["Policy Parameterization", "Latent-Augmented MDP", "Consistency"]}>
+  <Fragment slot="tab-0">
+    Wrap a small Gaussian around each flow output $T_\theta(s, z)$, automatically localizing the effective sampling region around the latent.
 
-$$\pi(a \mid s) \;=\; \int p_z(z)\,\hat\pi(a \mid s, z)\,dz, \qquad \hat\pi(a \mid s, z) = \mathcal{N}\bigl(T_\theta(s, z),\,\Sigma\bigr).$$
+    $$\hat\pi(a \mid s, z) = \mathcal{N}\bigl(T_\theta(s, z),\,\Sigma\bigr)$$
 
-Full proofs of marginal and Q-function consistency (Corollaries 4.2, 4.4) are in the paper.
-
-<Tabs defaultValue="policy">
-  <TabsList>
-    <TabsTrigger value="policy">Policy parameterization</TabsTrigger>
-    <TabsTrigger value="zmdp">Latent-augmented MDP</TabsTrigger>
-  </TabsList>
-  <TabsContent value="policy">
     <Figure>
       <Picture slot="figure" src="../assets/policy_parameterization.pdf" alt="Flow map transports latent z to multi-modal anchor actions, around which local Gaussians form the local policy and marginalize into the global policy" />
       <Fragment slot="caption">The deterministic flow map $T_\theta(s, z)$ transports a latent prior $z \sim p_z$ to multi-modal anchor actions. Wrapping each anchor with a small Gaussian gives a tractable *local* density $\hat\pi(a \mid s, z)$; the global policy $\pi(a \mid s)$ is recovered as a marginal over $z$.</Fragment>
     </Figure>
-  </TabsContent>
-  <TabsContent value="zmdp">
+  </Fragment>
+  <Fragment slot="tab-1">
+    Lift the MDP by treating $z$ as part of the state — this is the **z-MDP**. The local policy $\hat\pi(a \mid s, z)$ acts within each latent-conditioned region; the global policy $\pi(a \mid s)$ is recovered by marginalizing over $z$.
+
+    $$\pi(a \mid s) \;=\; \int p_z(z)\,\hat\pi(a \mid s, z)\,dz$$
+
     <Figure>
       <Picture slot="figure" src="../assets/zMDP.pdf" alt="Graphical model of the latent-augmented MDP showing the local-policy path (red), the global-policy marginalization (blue), and the environment dynamics (black)" />
       <Fragment slot="caption">The z-MDP appends the latent $z$ to the state. The local policy path (red) generates an anchor $\tilde a$ from $(s, z, \theta)$; the global policy path (blue) marginalizes the local Gaussian around $\tilde a$ to produce the executed action $a$. Marginal and Q-function consistency mean both views optimize the same RL objective.</Fragment>
     </Figure>
-  </TabsContent>
-</Tabs>
+  </Fragment>
+  <Fragment slot="tab-2">
+    The z-MDP preserves both **state–action marginals** and the **Q-function** — optimizing on the z-MDP is the *same* problem as on the original MDP. Local IS becomes principled, not a heuristic.
+
+    <small class="mt-2 block text-xs italic text-zinc-500 dark:text-zinc-400">Full proofs (Corollaries 4.2, 4.4) are in the paper.</small>
+  </Fragment>
+</IdeaTabs>
 </Fragment>
 
 <Fragment slot="bottom-line">
@@ -330,7 +333,6 @@ Monotonic improvement is established from **two complementary perspectives — M
 
 </QCard>
 
-</Wide>
 
 {/* <Wide>
   <Picture src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />

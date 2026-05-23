@@ -1,0 +1,74 @@
+---
+interface Props {
+  labels: [string, string, string];
+}
+const { labels } = Astro.props;
+---
+
+<div class="idea-tabs-root not-prose my-3">
+  <div
+    class="idea-tab-bar mb-4 flex flex-wrap justify-center gap-2"
+  >
+    {labels.map((label, i) => (
+      <button
+        type="button"
+        data-idea-index={String(i)}
+        data-active={i === 0 ? "true" : "false"}
+        class={`idea-tab rounded-md border px-4 py-1.5 text-sm font-semibold tracking-wide transition-all duration-150 ${
+          i === 0
+            ? 'border-blue-700 bg-blue-700 text-white shadow-sm dark:border-sky-500 dark:bg-sky-600 dark:text-white'
+            : 'border-blue-300 bg-white text-blue-700 hover:border-blue-500 hover:bg-blue-50 dark:border-sky-600/50 dark:bg-transparent dark:text-sky-300 dark:hover:bg-sky-800/40'
+        }`}
+      >
+        {label}
+      </button>
+    ))}
+  </div>
+
+  <div data-idea-panel="0" class="idea-panel rounded-lg border border-blue-200 bg-blue-50 p-3.5 text-sm leading-relaxed text-zinc-800 dark:border-sky-600/40 dark:bg-sky-800/25 dark:text-zinc-200">
+    <slot name="tab-0" />
+  </div>
+  <div data-idea-panel="1" class="idea-panel hidden rounded-lg border border-blue-200 bg-blue-50 p-3.5 text-sm leading-relaxed text-zinc-800 dark:border-sky-600/40 dark:bg-sky-800/25 dark:text-zinc-200">
+    <slot name="tab-1" />
+  </div>
+  <div data-idea-panel="2" class="idea-panel hidden rounded-lg border border-blue-200 bg-blue-50 p-3.5 text-sm leading-relaxed text-zinc-800 dark:border-sky-600/40 dark:bg-sky-800/25 dark:text-zinc-200">
+    <slot name="tab-2" />
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".idea-tabs-root").forEach((root) => {
+    const tabs = root.querySelectorAll<HTMLButtonElement>(".idea-tab");
+    const panels = root.querySelectorAll<HTMLElement>(".idea-panel");
+
+    const activeClass = [
+      "border-blue-700", "bg-blue-700", "text-white", "shadow-sm",
+      "dark:border-sky-500", "dark:bg-sky-600", "dark:text-white",
+    ];
+    const inactiveClass = [
+      "border-blue-300", "bg-white", "text-blue-700",
+      "hover:border-blue-500", "hover:bg-blue-50",
+      "dark:border-sky-600/50", "dark:bg-transparent", "dark:text-sky-300",
+      "dark:hover:bg-sky-800/40",
+    ];
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const idx = tab.dataset.ideaIndex ?? "0";
+
+        tabs.forEach((t) => {
+          const isActive = t === tab;
+          activeClass.forEach((c) => t.classList.toggle(c, isActive));
+          inactiveClass.forEach((c) => t.classList.toggle(c, !isActive));
+        });
+
+        panels.forEach((p) => {
+          if (p.dataset.ideaPanel === idx) p.classList.remove("hidden");
+          else p.classList.add("hidden");
+        });
+      });
+    });
+  });
+</script>
