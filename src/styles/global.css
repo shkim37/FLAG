@@ -60,6 +60,16 @@ main .katex-display {
   margin-inline: auto;
 }
 
+/* Equation cards (EqBox): keep display math inside the card, not full-bleed */
+.eqbox .katex-display {
+  margin-inline: 0;
+  margin-block: 0.35rem;
+}
+
+.eqbox .katex-display > .katex > .katex-html {
+  padding-inline: 0;
+}
+
 /* Bibliography */
 .csl-entry {
   margin-block: 1.5rem;

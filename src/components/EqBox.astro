@@ -1,0 +1,21 @@
+---
+interface Props {
+  label?: string;
+}
+const { label } = Astro.props;
+---
+
+<div
+  class="eqbox not-prose flex h-full flex-col rounded-lg border border-zinc-200 bg-white px-4 py-3 text-zinc-900 shadow-sm"
+>
+  {
+    label && (
+      <span class="mb-2 inline-flex w-fit items-center rounded-md bg-blue-50 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-blue-700 ring-1 ring-inset ring-blue-200">
+        {label}
+      </span>
+    )
+  }
+  <div class="eqbox-math overflow-x-auto text-zinc-900">
+    <slot />
+  </div>
+</div>

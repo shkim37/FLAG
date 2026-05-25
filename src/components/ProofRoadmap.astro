@@ -1,0 +1,47 @@
+---
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+}
+
+const { src, alt } = Astro.props;
+---
+
+<details
+  class="proof-roadmap not-prose mt-4 overflow-hidden rounded-lg border border-blue-200 bg-white shadow-sm dark:border-sky-700/40 dark:bg-zinc-900"
+>
+  <summary
+    class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-blue-700 transition-colors duration-150 hover:bg-blue-50 dark:text-sky-300 dark:hover:bg-sky-950/40 [&::-webkit-details-marker]:hidden"
+  >
+    <span>Proof Roadmap</span>
+    <svg
+      class="proof-roadmap-chevron h-4 w-4 shrink-0 text-blue-500 transition-transform duration-200 dark:text-sky-300"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </summary>
+  <div class="border-t border-blue-100 bg-zinc-50 p-3 dark:border-sky-800/50 dark:bg-zinc-950">
+    <div class="overflow-x-auto">
+      <img
+        src={src.src}
+        width={src.width}
+        height={src.height}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        class="block w-full min-w-[760px] max-w-none rounded-md border border-zinc-200 bg-white shadow-sm md:min-w-0 dark:border-zinc-700"
+      />
+    </div>
+  </div>
+</details>
+
+<style>
+  .proof-roadmap[open] .proof-roadmap-chevron {
+    transform: rotate(180deg);
+  }
+</style>

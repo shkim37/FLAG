@@ -68,6 +68,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/starwind/
 import { Comparison } from "./components/Comparison.tsx";
 import QCard from "./components/QCard.astro";
 import IdeaTabs from "./components/IdeaTabs.astro";
+import EqBox from "./components/EqBox.astro";
+import ProofRoadmap from "./components/ProofRoadmap.astro";
 
 import outside from "./assets/outside.mp4";
 import dogsDiffc from "./assets/dogs-diffc.png"
@@ -76,8 +78,8 @@ import dogsMsillm from "@/assets/dogs-msillm.jpg"
 import multigoalenv from "./assets/multigoal_new.png"
 import highdimenv from "./assets/new_5_1_scatter.png"
 import localizedEM from "./assets/localized_EM_algorithm.png"
-import mpoProof from "./assets/MPO_proof.png"
-import sacProof from "./assets/SAC_proof.png"
+import mpoProofRoadmap from "./assets/MPO_proof_hq.png"
+import sacProofRoadmap from "./assets/SAC_proof_hq.png"
 
 {/* <Video src={outside} /> */}
 
@@ -216,29 +218,34 @@ Without Consistency, local IS optimizes the wrong objective and any gains are il
 <Fragment slot="solution">
 <IdeaTabs labels={["Policy Parameterization", "Latent-Augmented MDP", "Consistency"]}>
   <Fragment slot="tab-0">
-    Wrap a small Gaussian around each flow output $T_\theta(s, z)$, automatically localizing the effective sampling region around the latent.
-
-    $$\hat\pi(a \mid s, z) = \mathcal{N}\bigl(T_\theta(s, z),\,\Sigma\bigr)$$
-
     <Figure>
       <Picture slot="figure" src="../assets/policy_parameterization.pdf" alt="Flow map transports latent z to multi-modal anchor actions, around which local Gaussians form the local policy and marginalize into the global policy" />
-      <Fragment slot="caption">The deterministic flow map $T_\theta(s, z)$ transports a latent prior $z \sim p_z$ to multi-modal anchor actions. Wrapping each anchor with a small Gaussian gives a tractable *local* density $\hat\pi(a \mid s, z)$; the global policy $\pi(a \mid s)$ is recovered as a marginal over $z$.</Fragment>
+      <Fragment slot="caption">The deterministic flow map $T_\theta(s, z)$ transports a latent prior $z \sim p_z$ to multi-modal anchor actions. Wrapping each anchor with a small Gaussian gives a tractable *local* density $\hat\pi(a \mid s, z)$.</Fragment>
     </Figure>
   </Fragment>
   <Fragment slot="tab-1">
-    Lift the MDP by treating $z$ as part of the state — this is the **z-MDP**. The local policy $\hat\pi(a \mid s, z)$ acts within each latent-conditioned region; the global policy $\pi(a \mid s)$ is recovered by marginalizing over $z$.
-
-    $$\pi(a \mid s) \;=\; \int p_z(z)\,\hat\pi(a \mid s, z)\,dz$$
-
     <Figure>
       <Picture slot="figure" src="../assets/zMDP.pdf" alt="Graphical model of the latent-augmented MDP showing the local-policy path (red), the global-policy marginalization (blue), and the environment dynamics (black)" />
-      <Fragment slot="caption">The z-MDP appends the latent $z$ to the state. The local policy path (red) generates an anchor $\tilde a$ from $(s, z, \theta)$; the global policy path (blue) marginalizes the local Gaussian around $\tilde a$ to produce the executed action $a$. Marginal and Q-function consistency mean both views optimize the same RL objective.</Fragment>
+      <Fragment slot="caption">The **z-MDP** augments each state with the latent $z$, giving a separate local policy $\hat\pi(a \mid s, z)$ per region. The red path shows local anchor generation from $(s, z, \theta)$; the blue path marginalizes over $z$ to recover the global policy $\pi(a \mid s)$.</Fragment>
     </Figure>
   </Fragment>
   <Fragment slot="tab-2">
     The z-MDP preserves both **state–action marginals** and the **Q-function** — optimizing on the z-MDP is the *same* problem as on the original MDP. Local IS becomes principled, not a heuristic.
 
-    <small class="mt-2 block text-xs italic text-zinc-500 dark:text-zinc-400">Full proofs (Corollaries 4.2, 4.4) are in the paper.</small>
+    <div class="not-prose my-3 grid gap-3 md:grid-cols-2">
+      <EqBox label="Corollary 4.2 — Marginal consistency">
+        $$
+        \rho_\pi(s, a) = \int \hat\rho_{\hat\pi}(s, z, a)\,dz
+        $$
+      </EqBox>
+      <EqBox label="Corollary 4.4 — Q-function consistency">
+        $$
+        Q^{\hat\pi}(\hat s, a) = Q^{\pi}(s, a), \quad \forall\, s, z, a
+        $$
+      </EqBox>
+    </div>
+
+    <small class="mt-2 block text-xs italic text-zinc-500 dark:text-zinc-400">Full statements (Corollaries 4.2, 4.4) are in the paper. Details are in Appendix B.</small>
   </Fragment>
 </IdeaTabs>
 </Fragment>
@@ -252,37 +259,61 @@ We construct the **z-MDP**, and prove that optimizing the RL objective on the z-
 <QCard number="Q2" title="How do we incorporate this into MaxEnt-RL and update the policy?">
 
 <Fragment slot="challenge">
-Three things stand in the way of plugging the z-MDP into MaxEnt-RL:
+Two obstacles block plugging the z-MDP into MaxEnt-RL:
 
-- The MaxEnt entropy $\mathcal{H}(\pi)$ requires marginalizing over $z$ — **no closed form**.
-- Backpropagating through the flow ODE (BPTT) is **expensive and numerically unstable**.
-- We need a surrogate that is (i) tractable to evaluate and (ii) avoids differentiating through the flow.
+- **Intractable Entropy.** The composite policy's log-probability $\log\pi(a \mid s)$ requires marginalizing over the latent $z$ — there is **no closed form**.
+- **RL via Supervised Learning.** We want to cast MaxEnt-RL as an **EM algorithm** whose policy update reduces to a *supervised learning* problem — avoiding backprop through the flow ODE (BPTT).
 </Fragment>
 
 <Fragment slot="solution">
-**Idea.** Replace the entropy $\mathcal{H}(\pi)$ with the **cross-entropy** $\mathcal{H}(\pi, \tilde\pi)$ against the base flow $\tilde\pi$ — tractable via the Hutchinson trace estimator, and a valid surrogate whenever the local covariance is small (Proposition 4.3 in the paper). On the z-MDP, the resulting EM update collapses into two simple steps:
+<IdeaTabs labels={["Cross-entropy surrogate", "Localized EM"]}>
+  <Fragment slot="tab-0">
+    <EqBox label="Proposition 4.3 — Cross-entropy surrogate">
+      <div class="md:flex md:items-center md:gap-5">
+        <div class="min-w-0 md:basis-[63%]">
 
-- **E-step** — a local Boltzmann tilt of the Gaussian proposal around each anchor.
-- **M-step** — supervised regression of the flow onto improved action labels $\mu_k^*$, estimated by SNIS over $N$ local samples. **No BPTT.**
+        $$
+        \begin{aligned}
+        D_{\mathrm{TV}}(\pi, \tilde\pi) &= \mathcal{O}\big(\sqrt{\mathrm{tr}(\Sigma)}\big), \quad
+        D_{\mathrm{KL}}(\pi \,\|\, \tilde\pi) = \mathcal{O}\big(\mathrm{tr}(\Sigma)^2\big) \\[4pt]
+        \mathcal{H}(\pi, \tilde\pi) &= \mathcal{H}(\pi) + \mathcal{O}\big(\mathrm{tr}(\Sigma)^2\big) \approx \mathcal{H}(\pi)
+        \end{aligned}
+        $$
 
-<Tabs defaultValue="ce">
-  <TabsList>
-    <TabsTrigger value="ce">Cross-entropy surrogate</TabsTrigger>
-    <TabsTrigger value="em">Localized EM</TabsTrigger>
-  </TabsList>
-  <TabsContent value="ce">
-    <Figure>
-      <Picture slot="figure" src="../assets/Proposition_4_3.pdf" alt="Proposition 4.3 stating that the cross-entropy between the global policy and the base flow converges to the true entropy as the local variance shrinks" />
-      <Fragment slot="caption">As the local variance $\mathrm{tr}(\Sigma)$ shrinks, the cross-entropy $\mathcal{H}(\pi, \tilde\pi)$ collapses to the true entropy $\mathcal{H}(\pi)$ at second order. The intractable MaxEnt entropy can therefore be replaced by a tractable cross-entropy against the base flow with controlled error.</Fragment>
-    </Figure>
-  </TabsContent>
-  <TabsContent value="em">
-    <Figure>
-      <Picture slot="figure" src={localizedEM} alt="Per-latent local Gaussians are nudged toward the Q-weighted target within their local region and distilled back into the flow via CFM" />
-      <Fragment slot="caption">Each local Gaussian (cyan) is nudged toward the Q-weighted target *inside its own local region*, and these locally improved targets are distilled back into the flow via CFM. Supervision stays dense even when $N$ is tiny, since the proposal and target always overlap.</Fragment>
-    </Figure>
-  </TabsContent>
-</Tabs>
+        </div>
+        <div class="mt-3 min-w-0 md:mt-0 md:basis-[37%]">
+          <Picture src="../assets/Proposition_4_3.pdf" alt="Plot showing the global policy converging to the base flow as the local variance shrinks" />
+        </div>
+      </div>
+    </EqBox>
+
+    - Replace the entropy $\mathcal{H}(\pi)$ with the **cross-entropy** $\mathcal{H}(\pi, \tilde\pi)$ against the base flow $\tilde\pi$.
+    - Estimate $\log \tilde \pi(a\mid s)$ via the **Hutchinson trace estimator** — Use **common random numbers (CRN)** to reduce variance in the estimator (Appendix D.3).
+  </Fragment>
+  <Fragment slot="tab-1">
+    <EqBox label="Localized EM on the z-MDP">
+      <div class="md:flex md:items-center md:gap-5">
+        <div class="min-w-0 md:basis-[63%]">
+
+        $$
+        \begin{aligned}
+        \textbf{E-step:}\;\; & q_k(a \mid \hat s) \propto \hat\pi(a \mid \hat s; \theta_k)\,\exp\!\big(f_{\hat s, k}(a)/\lambda\big) \\[6pt]
+        \textbf{M-step:}\;\; & \theta_{k+1} \in \operatorname*{arg\,min}_{\theta}\; \mathbb{E}_{(s,z)\sim\hat\rho_{\hat\pi}}\big\|\, T_\theta(s,z) - \mu_k^*(\hat s) \big\|^2 \\[2pt]
+        & \mu_k^*(\hat s) := \mathbb{E}_{q_k}[a]
+        \end{aligned}
+        $$
+
+        </div>
+        <div class="mt-3 min-w-0 md:mt-0 md:basis-[37%]">
+          <Picture src={localizedEM} alt="Per-latent local Gaussians are shifted toward the Q-weighted target within their local region and distilled back into the flow via CFM" />
+        </div>
+      </div>
+    </EqBox>
+
+    - **E-step** — a local Boltzmann tilt of the Gaussian proposal around each anchor.
+    - **M-step** — supervised regression of the flow onto improved action labels $\mu_k^*$, using *Method of moments* to estimate the labels with $N$ local samples.
+  </Fragment>
+</IdeaTabs>
 </Fragment>
 
 <Fragment slot="bottom-line">
@@ -291,44 +322,74 @@ We use the **cross-entropy as a tractable entropy surrogate** and update the flo
 
 </QCard>
 
-<QCard number="Q3" title="Is this construction theoretically guaranteed to improve the policy?">
+<QCard number="Q3" title="Does FLAG provably improve the policy, and how does it relate to SAC?">
 
 <Fragment slot="challenge">
-Both halves of the update are approximate:
+FLAG updates the policy by **supervised distillation**, not by differentiating the objective through the flow. Two guarantees are therefore not obvious — and this section establishes both:
 
-- The E-step uses **SNIS** with a finite sample budget.
-- The M-step uses **CFM regression** to project the improved labels back into the flow.
-
-Two questions follow: does monotonic improvement still hold? And does the guarantee survive scrutiny from *both* the MPO (variational) and SAC (reparameterization) perspectives that the RL community cares about?
+- **Monotonic improvement.** Does FLAG's update actually raise the objective, i.e. is $\mathcal{J}_{k+1} \geq \mathcal{J}_k$ guaranteed?
+- **Relation to SAC.** We optimize a MaxEnt-RL objective — so how does FLAG's update relate to **Soft Actor–Critic** (SAC), and does it inherit SAC's *soft policy improvement*?
 </Fragment>
 
 <Fragment slot="solution">
-**Idea.** One FLAG step decomposes into three pieces: a positive MPO improvement, a *cross-entropy drift* from $\theta_k$ changing across iterations, and the CFM projection error. Under a small step size and small $\sigma_k$, the MPO term dominates → **monotonic improvement** (Theorem 4.5).
+<IdeaTabs labels={["Monotonic Improvement", "Relation to SAC"]}>
+  <Fragment slot="tab-0">
+    <EqBox label="Theorem 4.5 — Monotonic Improvement Guarantee">
 
-A complementary **SAC perspective** shows that the moment-matching target $\mu_k^*$ approximates the SAC reparameterization-gradient direction via a log-sum-exp identity — so FLAG inherits soft policy improvement without ever backpropagating through the flow ODE.
+    $$
+    \mathcal{J}_{k+1} - \mathcal{J}_k
+    \;\geq\;
+    \underbrace{\lambda \beta \mathcal{G}_k}_{\substack{\text{frozen-reward}\\\text{MPO improvement}}}
+    \;-\;
+    \underbrace{\alpha\, C_\Sigma\, \sigma_k^2\, \beta \mathcal{G}_k}_{\substack{\text{cross-entropy}\\\text{reward drift}}}
+    \;-\;
+    \underbrace{\lambda\, \epsilon_k^{\mathrm{proj}}}_{\substack{\text{CFM projection}\\\text{error}}}
+    \;+\; \mathcal{O}(\beta^2)
+    $$
 
-<Tabs defaultValue="mpo">
-  <TabsList>
-    <TabsTrigger value="mpo">MPO perspective</TabsTrigger>
-    <TabsTrigger value="sac">SAC perspective</TabsTrigger>
-  </TabsList>
-  <TabsContent value="mpo">
-    <Figure>
-      <Picture slot="figure" src={mpoProof} alt="Decomposition of one FLAG step into MPO improvement, cross-entropy drift, and CFM projection error, with each implementation knob controlling the corresponding term" />
-      <Fragment slot="caption">From the variational MPO view, one FLAG step decomposes into a positive improvement term, a cross-entropy drift bounded by $\sigma_k^2$, and a CFM projection error $\epsilon_k^{\mathrm{proj}}$. Each implementation knob — covariance scheduling, guidance buffer — directly suppresses one of the error terms.</Fragment>
-    </Figure>
-  </TabsContent>
-  <TabsContent value="sac">
-    <Figure>
-      <Picture slot="figure" src={sacProof} alt="Derivation showing the moment-matching update recovers the SAC reparameterization-gradient direction without backpropagating through the flow ODE" />
-      <Fragment slot="caption">From the SAC view, the moment-matching target $\mu_k^*$ recovers the same descent direction that SAC obtains via the reparameterization trick — but evaluated through a zeroth-order log-sum-exp identity, so the flow ODE is never differentiated through.</Fragment>
-    </Figure>
-  </TabsContent>
-</Tabs>
+    </EqBox>
+
+    - One FLAG step splits into a **positive MPO improvement** term, a **cross-entropy drift** that scales with the local variance $\sigma_k^2$, and the **CFM projection error** $\epsilon_k^{\mathrm{proj}}$.
+    - Whenever $\lambda > \alpha\, C_\Sigma\, \sigma_k^2$ and the projection error is small, the improvement term dominates, so $\mathcal{J}_{k+1} \geq \mathcal{J}_k$ — **monotonic improvement**.
+
+    <ProofRoadmap src={mpoProofRoadmap} alt="Proof roadmap for the MPO-style monotonic improvement of FLAG" />
+  </Fragment>
+  <Fragment slot="tab-1">
+    <div class="not-prose space-y-3">
+      <EqBox label="SAC — Soft policy improvement">
+
+      $$
+      \pi_{\mathrm{new}} = \operatorname*{arg\,min}_{\pi \in \Pi} D_{\mathrm{KL}}\!\left( \pi(a \mid s) \,\Big\|\, \tfrac{1}{Z}\exp\!\big(Q^{\pi_{\mathrm{old}}}/\alpha\big) \right)
+      \;\Longrightarrow\;
+      Q^{\pi_{\mathrm{new}}} \geq Q^{\pi_{\mathrm{old}}}
+      $$
+
+      </EqBox>
+      <EqBox label="FLAG — zeroth-order realization">
+
+      $$
+      \begin{aligned}
+      g_k(\mu) &:= \underbrace{\log \mathbb{E}_{\delta \sim \mathcal{N}(0,\, \Sigma_k)}\big[\exp\!\big( f_{\hat s, k}(\mu + \delta)/\lambda \big)\big]}_{\text{log-sum-exp smoothing}} \\[12pt]
+      \underbrace{\mu_k^*(\hat s) - \mu_k}_{\text{FLAG M-step}} &\overset{(\text{Stein's identity})}{=} \Sigma_k \nabla_\mu g_k
+      \;\approx\;
+      \Sigma_k \underbrace{\nabla_a\!\big( Q^{\tilde\pi}(s, a) - \alpha \log \tilde\pi_{\theta_k}(a \mid s) \big)}_{\text{SAC action gradient}}
+      \end{aligned}
+      $$
+
+      </EqBox>
+    </div>
+
+    - SAC's soft policy improvement theorem is **agnostic to how** the KL minimizer is obtained.
+    - **SAC** restricts $\Pi$ to a Gaussian and takes a *first-order* reparameterization gradient; **FLAG** solves the same KL minimization with a *non-parametric, action-level* update — a **zeroth-order** approximation via Stein's identity and log-sum-exp smoothing.
+    <small class="mt-2 block text-xs italic text-zinc-500 dark:text-zinc-400">Full statements are in the paper. Details are in Appendix C.2.</small>
+
+    <ProofRoadmap src={sacProofRoadmap} alt="Proof roadmap comparing SAC's reparameterized update with FLAG's non-parametric EM update" />
+  </Fragment>
+</IdeaTabs>
 </Fragment>
 
 <Fragment slot="bottom-line">
-Monotonic improvement is established from **two complementary perspectives — MPO (variational) and SAC (reparameterization)** — without ever differentiating through the flow ODE.
+Monotonic improvement is established from **two complementary perspectives — MPO (variational) and SAC (soft policy improvement)** — and FLAG realizes SAC-style improvement for expressive flow policies **without ever differentiating through the flow ODE**.
 </Fragment>
 
 </QCard>
