@@ -1,0 +1,57 @@
+---
+interface Props {
+  number: string;
+  question: string;
+  answer: string;
+}
+
+const { number, question, answer } = Astro.props;
+const answerLabel = number.replace("Q", "A");
+---
+
+<details
+  id={`result-${number}`}
+  open
+  class="result-qcard not-prose group my-4 scroll-mt-20 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 shadow-sm transition-shadow duration-200 open:shadow-md dark:border-zinc-700 dark:bg-zinc-800"
+>
+  <summary
+    class="flex w-full cursor-pointer list-none items-center gap-4 px-5 py-4 transition-colors duration-150 hover:bg-zinc-100 dark:hover:bg-zinc-700 [&::-webkit-details-marker]:hidden"
+  >
+    <span
+      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-700 text-sm font-bold text-white"
+      >{number}</span
+    >
+    <span class="flex-1 text-sm font-semibold text-zinc-800 dark:text-zinc-100 md:text-base"
+      >{question}</span
+    >
+    <svg
+      class="h-5 w-5 shrink-0 text-zinc-400 transition-transform duration-300 group-open:rotate-180 dark:text-zinc-500"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </summary>
+
+  <div class="border-t border-zinc-200 px-5 pb-5 pt-4 dark:border-zinc-700">
+    <div
+      class="mb-4 rounded-lg border border-teal-200 bg-teal-50 p-4 dark:border-emerald-700/40 dark:bg-emerald-950/40"
+    >
+      <div
+        class="mb-1 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-emerald-300"
+      >
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal-600 text-xs font-bold text-white dark:bg-emerald-600">
+          {answerLabel}
+        </span>
+        Answer
+      </div>
+      <div class="text-base font-bold leading-snug text-zinc-900 dark:text-zinc-100">
+        {answer}
+      </div>
+    </div>
+
+    <slot />
+  </div>
+</details>

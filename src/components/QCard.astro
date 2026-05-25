@@ -7,8 +7,9 @@ const { number, title } = Astro.props;
 ---
 
 <details
+  id={number}
   open
-  class="qcard not-prose group my-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 shadow-sm transition-shadow duration-200 open:shadow-md dark:border-zinc-700 dark:bg-zinc-800"
+  class="qcard not-prose group my-3 scroll-mt-20 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 shadow-sm transition-shadow duration-200 open:shadow-md dark:border-zinc-700 dark:bg-zinc-800"
 >
   <summary
     class="flex w-full cursor-pointer list-none items-center gap-4 px-5 py-4 transition-colors duration-150 hover:bg-zinc-100 dark:hover:bg-zinc-700 [&::-webkit-details-marker]:hidden"

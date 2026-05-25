@@ -67,6 +67,7 @@ import Wide from "./components/Wide.astro";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/starwind/tabs";
 import { Comparison } from "./components/Comparison.tsx";
 import QCard from "./components/QCard.astro";
+import ResultQCard from "./components/ResultQCard.astro";
 import IdeaTabs from "./components/IdeaTabs.astro";
 import EqBox from "./components/EqBox.astro";
 import ProofRoadmap from "./components/ProofRoadmap.astro";
@@ -80,6 +81,9 @@ import highdimenv from "./assets/new_5_1_scatter.png"
 import localizedEM from "./assets/localized_EM_algorithm.png"
 import mpoProofRoadmap from "./assets/MPO_proof_hq.png"
 import sacProofRoadmap from "./assets/SAC_proof_hq.png"
+import table2DmcDog from "./assets/table2_dmc_dog.png"
+import table2MyoSuite from "./assets/table2_myo_suite.png"
+import figure4WithoutCrossQ from "./assets/figure4_without_crossq.png"
 
 {/* <Video src={outside} /> */}
 
@@ -381,7 +385,7 @@ FLAG updates the policy by **supervised distillation**, not by differentiating t
 
     - SAC's soft policy improvement theorem is **agnostic to how** the KL minimizer is obtained.
     - **SAC** restricts $\Pi$ to a Gaussian and takes a *first-order* reparameterization gradient; **FLAG** solves the same KL minimization with a *non-parametric, action-level* update — a **zeroth-order** approximation via Stein's identity and log-sum-exp smoothing.
-    <small class="mt-2 block text-xs italic text-zinc-500 dark:text-zinc-400">Full statements are in the paper. Details are in Appendix C.2.</small>
+    <small class="mt-2 block text-xs italic text-zinc-500 dark:text-zinc-400">Full statements and details are in Appendix C.2.</small>
 
     <ProofRoadmap src={sacProofRoadmap} alt="Proof roadmap comparing SAC's reparameterized update with FLAG's non-parametric EM update" />
   </Fragment>
@@ -393,6 +397,435 @@ Monotonic improvement is established from **two complementary perspectives — M
 </Fragment>
 
 </QCard>
+
+## Experimental Results
+
+We present the results around the three questions used in Section 5 of the paper.
+
+<ResultQCard
+  number="Q1"
+  question="Does FLAG scale to high-dimensional action spaces under limited sample budgets?"
+  answer="FLAG is Scalable to High-dimensional Action Spaces and Robust to Sample Budget"
+>
+  <Tabs defaultValue="q1-1">
+    <TabsList>
+      <TabsTrigger value="q1-1"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[9px] font-bold text-white">Q</span>1.1 Scalability</TabsTrigger>
+      <TabsTrigger value="q1-2"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[9px] font-bold text-white">Q</span>1.2 Sample Budget</TabsTrigger>
+      <TabsTrigger value="q1-p1">Full Results: P=1</TabsTrigger>
+      <TabsTrigger value="q1-p32">Full Results: P=32</TabsTrigger>
+    </TabsList>
+
+    <TabsContent value="q1-1" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
+      <div class="mb-3 text-sm">
+        <div class="font-bold text-zinc-900 dark:text-zinc-100">Is FLAG Scale to high-dimensional action space?</div>
+        <p class="mt-1 text-zinc-600 dark:text-zinc-300">FLAG stays in the high-return, low-runtime region as action dimensionality increases, while global-proposal baselines degrade or require larger best-of-P budgets.</p>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
+          <div class="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">With CrossQ + limited Sample budget</div>
+          <Figure>
+            <Picture slot="figure" src={highdimenv} alt="Figure 3 comparing performance and GPU hours for global and local proposal sampling across MuJoCo, DMC Dog, and MyoSuite" />
+            <Fragment slot="caption">Figure 3: Performance and computational efficiency of global and local proposal sampling.</Fragment>
+          </Figure>
+        </div>
+        <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
+          <div class="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">Without CrossQ + Default Sample budget</div>
+          <Figure>
+            <Picture slot="figure" src={figure4WithoutCrossQ} alt="Figure 4 DMC Dog-run and Dog-trot comparison without CrossQ" />
+            <Fragment slot="caption">Figure 4: Comparison on DMC Dog-run and Dog-trot without CrossQ.</Fragment>
+          </Figure>
+        </div>
+      </div>
+    </TabsContent>
+
+    <TabsContent value="q1-2" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
+      <div class="mb-3 text-sm">
+        <div class="font-bold text-zinc-900 dark:text-zinc-100">Is FLAG robust to the sample budget?</div>
+        <p class="mt-1 text-zinc-600 dark:text-zinc-300">Local proposal matching keeps importance samples informative even when the update uses only a small number of samples.</p>
+      </div>
+      <div class="overflow-x-auto rounded-lg border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900/40">
+        <table class="min-w-full border-collapse text-left text-sm">
+          <thead class="bg-zinc-100 text-xs uppercase tracking-wide text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+            <tr>
+              <th class="px-3 py-2 font-bold">Num. Samples</th>
+              <th class="px-3 py-2 text-center font-bold">Dog-trot Return (1k)</th>
+              <th class="px-3 py-2 text-center font-bold">Dog-run Return (1k)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+            <tr>
+              <td class="px-3 py-2 font-semibold">N = 2</td>
+              <td class="px-3 py-2 text-center">0.620 ± 0.072</td>
+              <td class="px-3 py-2 text-center">0.818 ± 0.095</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2 font-semibold">N = 4</td>
+              <td class="px-3 py-2 text-center">0.639 ± 0.061</td>
+              <td class="px-3 py-2 text-center">0.827 ± 0.106</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2 font-semibold">N = 8</td>
+              <td class="px-3 py-2 text-center">0.680 ± 0.066</td>
+              <td class="px-3 py-2 text-center">0.912 ± 0.047</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2 font-semibold">N = 16</td>
+              <td class="px-3 py-2 text-center">0.687 ± 0.073</td>
+              <td class="px-3 py-2 text-center">0.874 ± 0.087</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2 font-semibold">N = 32</td>
+              <td class="px-3 py-2 text-center">0.641 ± 0.075</td>
+              <td class="px-3 py-2 text-center">0.879 ± 0.057</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-2 text-xs italic text-zinc-500 dark:text-zinc-400">Table 1: DMC Dog tasks, IQM over 10 seeds at 1M steps.</div>
+    </TabsContent>
+
+    <TabsContent value="q1-p1" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
+      <Figure>
+        <Picture slot="figure" src="../assets/5_1_learning_curves_p1.pdf" alt="Figure 9 full learning curves for Figure 3 with P equals 1" />
+        <Fragment slot="caption">Figure 9: Full learning curves of Figure 3 (P=1).</Fragment>
+      </Figure>
+    </TabsContent>
+
+    <TabsContent value="q1-p32" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
+      <Figure>
+        <Picture slot="figure" src="../assets/5_1_learning_curves_p32.pdf" alt="Figure 10 full learning curves for Figure 3 with P equals 32" />
+        <Fragment slot="caption">Figure 10: Full learning curves of Figure 3 (P=32).</Fragment>
+      </Figure>
+    </TabsContent>
+  </Tabs>
+</ResultQCard>
+
+<ResultQCard
+  number="Q2"
+  question="How does FLAG compare to action-gradient and BPTT-based actor-critic methods?"
+  answer="FLAG Outperforms BPTT-based Actor-Critic and Action Gradient Methods"
+>
+  <Tabs defaultValue="q2-with-crossq">
+    <TabsList>
+      <TabsTrigger value="q2-with-crossq"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[9px] font-bold text-white">Q</span>With CrossQ</TabsTrigger>
+      <TabsTrigger value="q2-without-crossq"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[9px] font-bold text-white">Q</span>Without CrossQ</TabsTrigger>
+    </TabsList>
+
+    <TabsContent value="q2-with-crossq" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
+      <Tabs defaultValue="q2-dmc">
+        <TabsList>
+          <TabsTrigger value="q2-dmc">DMC-Dog</TabsTrigger>
+          <TabsTrigger value="q2-myo">Myo-Suite</TabsTrigger>
+          <TabsTrigger value="q2-learning">Full Results</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="q2-dmc" class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
+          <Figure>
+            <Picture slot="figure" src={table2DmcDog} alt="Table 2 DMC Dog IQM final performance after 1M environment steps" />
+            <Fragment slot="caption">Table 2: DMC Dog final performance with CrossQ.</Fragment>
+          </Figure>
+        </TabsContent>
+
+        <TabsContent value="q2-myo" class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
+          <Figure>
+            <Picture slot="figure" src={table2MyoSuite} alt="Table 2 MyoSuite IQM final performance after 1M environment steps" />
+            <Fragment slot="caption">Table 2: MyoSuite final performance with CrossQ.</Fragment>
+          </Figure>
+        </TabsContent>
+
+        <TabsContent value="q2-learning" class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
+          <Figure>
+            <Picture slot="figure" src="../assets/5_2_learning_curves.pdf" alt="Figure 11 learning curves for other diffusion and flow-matching algorithms in four MuJoCo tasks" />
+            <Fragment slot="caption">Figure 11: Learning curves for diffusion and flow-matching algorithms in four MuJoCo tasks.</Fragment>
+          </Figure>
+        </TabsContent>
+      </Tabs>
+    </TabsContent>
+
+    <TabsContent value="q2-without-crossq" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
+      <div class="mb-3 text-sm text-zinc-600 dark:text-zinc-300">
+        Without CrossQ, critic gradients become less reliable. FLAG remains effective because it aggregates critic signals into target actions rather than differentiating through the critic directly.
+      </div>
+      <div class="overflow-x-auto rounded-lg border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900/40">
+        <table class="min-w-full border-collapse text-left text-xs">
+          <thead>
+            <tr class="bg-zinc-100 dark:bg-zinc-800">
+              <th class="px-2 py-2 font-bold text-zinc-700 dark:text-zinc-300">P</th>
+              <th class="px-2 py-2 font-bold text-zinc-700 dark:text-zinc-300">N</th>
+              <th class="px-2 py-2 font-bold text-zinc-700 dark:text-zinc-300">Alg.</th>
+              <th class="px-2 py-2 text-center font-bold text-zinc-700 dark:text-zinc-300">Dog-trot Return (1k) ↑</th>
+              <th class="px-2 py-2 text-center font-bold text-zinc-700 dark:text-zinc-300">ΔF ↓</th>
+              <th class="px-2 py-2 text-center font-bold text-zinc-700 dark:text-zinc-300">Dog-run Return (1k) ↑</th>
+              <th class="px-2 py-2 text-center font-bold text-zinc-700 dark:text-zinc-300">ΔF ↓</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+            <tr>
+              <td class="px-2 py-1.5">1</td>
+              <td class="px-2 py-1.5">64</td>
+              <td class="px-2 py-1.5 font-medium">SDAC</td>
+              <td class="px-2 py-1.5 text-center">0.008 ± 0.001</td>
+              <td class="px-2 py-1.5 text-center">0.984</td>
+              <td class="px-2 py-1.5 text-center">0.006 ± 0.000</td>
+              <td class="px-2 py-1.5 text-center">0.980</td>
+            </tr>
+            <tr>
+              <td class="px-2 py-1.5">1</td>
+              <td class="px-2 py-1.5">64</td>
+              <td class="px-2 py-1.5 font-medium">DPMD</td>
+              <td class="px-2 py-1.5 text-center">0.013 ± 0.008</td>
+              <td class="px-2 py-1.5 text-center">0.974</td>
+              <td class="px-2 py-1.5 text-center">0.006 ± 0.002</td>
+              <td class="px-2 py-1.5 text-center">0.980</td>
+            </tr>
+            <tr>
+              <td class="px-2 py-1.5">1</td>
+              <td class="px-2 py-1.5">64</td>
+              <td class="px-2 py-1.5 font-medium">QVPO</td>
+              <td class="px-2 py-1.5 text-center">0.020 ± 0.022</td>
+              <td class="px-2 py-1.5 text-center">0.960</td>
+              <td class="px-2 py-1.5 text-center">0.039 ± 0.036</td>
+              <td class="px-2 py-1.5 text-center">0.872</td>
+            </tr>
+            <tr>
+              <td class="px-2 py-1.5">1</td>
+              <td class="px-2 py-1.5">500</td>
+              <td class="px-2 py-1.5 font-medium">MaxEntDP†</td>
+              <td class="px-2 py-1.5 text-center">0.007 ± 0.001</td>
+              <td class="px-2 py-1.5 text-center">0.986</td>
+              <td class="px-2 py-1.5 text-center">0.005 ± 0.001</td>
+              <td class="px-2 py-1.5 text-center">0.984</td>
+            </tr>
+            <tr class="border-t-2 border-zinc-300 dark:border-zinc-600">
+              <td class="px-2 py-1.5">32</td>
+              <td class="px-2 py-1.5">64</td>
+              <td class="px-2 py-1.5 font-medium">SDAC†</td>
+              <td class="px-2 py-1.5 text-center">0.019 ± 0.023</td>
+              <td class="px-2 py-1.5 text-center">0.962</td>
+              <td class="px-2 py-1.5 text-center">0.007 ± 0.002</td>
+              <td class="px-2 py-1.5 text-center">0.977</td>
+            </tr>
+            <tr>
+              <td class="px-2 py-1.5">32</td>
+              <td class="px-2 py-1.5">1</td>
+              <td class="px-2 py-1.5 font-medium">DPMD†</td>
+              <td class="px-2 py-1.5 text-center bg-teal-50 dark:bg-emerald-950/30 italic">0.117 ± 0.125</td>
+              <td class="px-2 py-1.5 text-center bg-teal-50 dark:bg-emerald-950/30 italic">0.766</td>
+              <td class="px-2 py-1.5 text-center">0.023 ± 0.016</td>
+              <td class="px-2 py-1.5 text-center">0.924</td>
+            </tr>
+            <tr>
+              <td class="px-2 py-1.5">4</td>
+              <td class="px-2 py-1.5">64</td>
+              <td class="px-2 py-1.5 font-medium">QVPO†</td>
+              <td class="px-2 py-1.5 text-center">0.077 ± 0.082</td>
+              <td class="px-2 py-1.5 text-center">0.846</td>
+              <td class="px-2 py-1.5 text-center">0.045 ± 0.054</td>
+              <td class="px-2 py-1.5 text-center">0.852</td>
+            </tr>
+            <tr class="border-t-2 border-zinc-300 dark:border-zinc-600">
+              <td class="px-2 py-1.5 text-zinc-400" colspan="3">
+                <span class="font-bold italic text-zinc-600 dark:text-zinc-400">BPTT-based methods</span>
+              </td>
+              <td colspan="4"></td>
+            </tr>
+            <tr>
+              <td class="px-2 py-1.5">--</td>
+              <td class="px-2 py-1.5">--</td>
+              <td class="px-2 py-1.5 font-medium">DIME†</td>
+              <td class="px-2 py-1.5 text-center">0.088 ± 0.073</td>
+              <td class="px-2 py-1.5 text-center">0.824</td>
+              <td class="px-2 py-1.5 text-center">0.025 ± 0.033</td>
+              <td class="px-2 py-1.5 text-center">0.918</td>
+            </tr>
+            <tr>
+              <td class="px-2 py-1.5">--</td>
+              <td class="px-2 py-1.5">--</td>
+              <td class="px-2 py-1.5 font-medium">DACERv2†</td>
+              <td class="px-2 py-1.5 text-center">0.107 ± 0.043</td>
+              <td class="px-2 py-1.5 text-center">0.786</td>
+              <td class="px-2 py-1.5 text-center bg-teal-50 dark:bg-emerald-950/30 italic">0.065 ± 0.059</td>
+              <td class="px-2 py-1.5 text-center bg-teal-50 dark:bg-emerald-950/30 italic">0.786</td>
+            </tr>
+            <tr class="border-t-2 border-zinc-300 bg-teal-50 dark:border-zinc-600 dark:bg-emerald-950/30">
+              <td class="px-2 py-1.5 font-bold text-teal-800 dark:text-emerald-200">1</td>
+              <td class="px-2 py-1.5 font-bold text-teal-800 dark:text-emerald-200">8</td>
+              <td class="px-2 py-1.5 font-bold text-teal-800 dark:text-emerald-200">FLAG†(ours)</td>
+              <td class="px-2 py-1.5 text-center font-bold text-teal-900 dark:text-emerald-100">0.500 ± 0.026</td>
+              <td class="px-2 py-1.5 text-center font-bold text-teal-900 dark:text-emerald-100">0.0</td>
+              <td class="px-2 py-1.5 text-center font-bold text-teal-900 dark:text-emerald-100">0.304 ± 0.027</td>
+              <td class="px-2 py-1.5 text-center font-bold text-teal-900 dark:text-emerald-100">0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-2 text-xs italic text-zinc-500 dark:text-zinc-400">Table 9: DMC Dog performance without CrossQ. ΔF = relative performance drop from FLAG. Best highlighted in teal; 2nd-best in light teal italic.</div>
+    </TabsContent>
+  </Tabs>
+</ResultQCard>
+
+<ResultQCard
+  number="Q3"
+  question="How do our key design choices---covariance scheduling and the guidance buffer---connect to the theoretical results?"
+  answer="FLAG Key Design Choices Align with Theoretical Results"
+>
+  <div class="flex flex-col gap-4">
+    <section class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
+      <div class="mb-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">A3.1 Covariance Scheduling</div>
+      <p class="mb-3 text-sm text-zinc-600 dark:text-zinc-300">Annealing the local covariance suppresses the covariance-dependent reward drift in Theorem 4.5 while preserving enough early exploration.</p>
+      <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
+        <table class="min-w-[720px] border-collapse text-center text-xs">
+          <thead class="bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+            <tr>
+              <th class="px-2 py-2 text-left">σinit (σfinal)</th>
+              <th class="px-2 py-2">-1(-1)</th>
+              <th class="px-2 py-2">-1(-2)</th>
+              <th class="px-2 py-2">-1(-3)</th>
+              <th class="px-2 py-2">-2(-2)</th>
+              <th class="px-2 py-2">-2(-3)</th>
+              <th class="px-2 py-2">-2(-4)</th>
+              <th class="px-2 py-2">-2(-5)</th>
+              <th class="px-2 py-2">-2(-6)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-zinc-200 dark:border-zinc-700">
+              <td class="px-2 py-2 text-left font-semibold">Return (1k) ↑</td>
+              <td class="px-2 py-2">0.614</td>
+              <td class="px-2 py-2">0.675</td>
+              <td class="bg-teal-100 px-2 py-2 font-bold text-teal-900 dark:bg-emerald-950 dark:text-emerald-100">0.732</td>
+              <td class="px-2 py-2">0.588</td>
+              <td class="bg-teal-50 px-2 py-2 font-bold text-teal-800 dark:bg-emerald-950/50 dark:text-emerald-200">0.680</td>
+              <td class="px-2 py-2">0.597</td>
+              <td class="px-2 py-2">0.547</td>
+              <td class="px-2 py-2">0.269</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-2 text-xs italic text-zinc-500 dark:text-zinc-400">DMC Dog-run, 5 seeds. -2(-3) is the default used in Section 5.1 and 5.2.</div>
+    </section>
+
+    <section class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
+      <div class="mb-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">A3.2 Guidance Buffer</div>
+      <p class="mb-3 text-sm text-zinc-600 dark:text-zinc-300">A moderate guidance buffer reduces CFM projection error by reusing recent improved action labels without letting targets become stale.</p>
+      <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
+        <table class="min-w-[480px] border-collapse text-center text-xs">
+          <thead class="bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+            <tr>
+              <th class="px-2 py-2 text-left">Buffer Size</th>
+              <th class="px-2 py-2">0</th>
+              <th class="px-2 py-2">10.24k</th>
+              <th class="px-2 py-2">51.2k</th>
+              <th class="px-2 py-2">102.4k</th>
+              <th class="px-2 py-2">204.8k</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-zinc-200 dark:border-zinc-700">
+              <td class="px-2 py-2 text-left font-semibold">Return (1k) ↑</td>
+              <td class="px-2 py-2">0.601</td>
+              <td class="bg-teal-100 px-2 py-2 font-bold text-teal-900 dark:bg-emerald-950 dark:text-emerald-100">0.680</td>
+              <td class="bg-teal-50 px-2 py-2 font-bold text-teal-800 dark:bg-emerald-950/50 dark:text-emerald-200">0.670</td>
+              <td class="px-2 py-2">0.618</td>
+              <td class="px-2 py-2">0.589</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-2 text-xs italic text-zinc-500 dark:text-zinc-400">DMC Dog-run, 5 seeds. 10.24k is the default used in Section 5.1 and 5.2.</div>
+    </section>
+  </div>
+</ResultQCard>
+
+## Design Choices & Ablations
+
+FLAG's monotonic-improvement bound (**Theorem 4.5**, see [Q3](#Q3)) decomposes one update into a *positive MPO improvement* minus two error terms — a **cross-entropy reward drift** (which grows with the local variance) and a **CFM projection error**. FLAG's two key design choices each exist to suppress one of these terms, so the ablations below are direct empirical tests of the theory. Secondary ablations are collapsed at the end.
+
+<ColorBox color="#0F766E" title="Covariance scheduling — suppresses the cross-entropy drift">
+
+<a href="#Q3" class="not-prose mb-1 inline-flex items-center gap-1.5 rounded-full border border-teal-700/40 bg-white/80 px-3 py-1 text-xs font-semibold !text-teal-800 !no-underline transition-colors hover:bg-teal-50">
+<span class="inline-block h-1.5 w-1.5 rounded-full bg-teal-600"></span>
+Controls σ²ₖ → the cross-entropy reward drift term · Theorem 4.5 (Q3) ↑
+</a>
+
+The drift term scales with the local variance $\sigma_k^2$, and the improvement condition $\lambda > \alpha\,C_\Sigma\,\sigma_k^2$ becomes easier to satisfy as $\sigma_k^2$ shrinks. FLAG therefore **anneals** $\sigma$ from $\sigma_{\text{init}}$ to $\sigma_{\text{final}}$ — broad early exploration, precise late updates. Annealing *too* aggressively shrinks the search region prematurely and collapses onto suboptimal modes.
+
+<div class="not-prose mt-3 flex flex-wrap gap-2 text-center">
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">-1(-1)</div><div class="text-sm font-bold text-zinc-800">0.614</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">-1(-2)</div><div class="text-sm font-bold text-zinc-800">0.675</div></div>
+<div class="rounded-md border-2 border-teal-600 bg-teal-100 px-2.5 py-1.5"><div class="text-[10px] font-semibold text-teal-700">-1(-3) ★</div><div class="text-sm font-extrabold text-teal-900">0.732</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">-2(-2)</div><div class="text-sm font-bold text-zinc-800">0.588</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">-2(-3)</div><div class="text-sm font-bold text-zinc-800">0.680</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">-2(-4)</div><div class="text-sm font-bold text-zinc-800">0.597</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">-2(-5)</div><div class="text-sm font-bold text-zinc-800">0.547</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">-2(-6)</div><div class="text-sm font-bold text-zinc-800">0.269</div></div>
+</div>
+
+<div class="not-prose mt-2 text-xs italic text-zinc-600">DMC Dog-run, return ÷1000, 5 seeds · log σ_init(σ_final) · ★ = default</div>
+
+</ColorBox>
+
+<ColorBox color="#0F766E" title="Guidance buffer — suppresses the CFM projection error">
+
+<a href="#Q3" class="not-prose mb-1 inline-flex items-center gap-1.5 rounded-full border border-teal-700/40 bg-white/80 px-3 py-1 text-xs font-semibold !text-teal-800 !no-underline transition-colors hover:bg-teal-50">
+<span class="inline-block h-1.5 w-1.5 rounded-full bg-teal-600"></span>
+Controls εₖ → the CFM projection error term · Theorem 4.5 (Q3) ↑
+</a>
+
+The CFM projection error $\epsilon_k^{\text{proj}}$ measures how faithfully the flow realizes the M-step target actions. A small **guidance buffer** caches recently computed targets and reuses them across off-policy updates, giving *denser* supervision and a smaller $\epsilon_k^{\text{proj}}$. No buffer leaves supervision sparse; an over-large buffer serves stale, mismatched targets.
+
+<div class="not-prose mt-3 flex flex-wrap gap-2 text-center">
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">0 (none)</div><div class="text-sm font-bold text-zinc-800">0.601</div></div>
+<div class="rounded-md border-2 border-teal-600 bg-teal-100 px-2.5 py-1.5"><div class="text-[10px] font-semibold text-teal-700">10.24k ★</div><div class="text-sm font-extrabold text-teal-900">0.680</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">51.2k</div><div class="text-sm font-bold text-zinc-800">0.670</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">102.4k</div><div class="text-sm font-bold text-zinc-800">0.618</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="text-[10px] font-medium text-zinc-500">204.8k</div><div class="text-sm font-bold text-zinc-800">0.589</div></div>
+</div>
+
+<div class="not-prose mt-2 text-xs italic text-zinc-600">DMC Dog-run, return ÷1000 · buffer size · ★ = default</div>
+
+</ColorBox>
+
+<details class="group my-6 rounded-xl border border-zinc-200 bg-zinc-50/60 px-5 dark:border-zinc-700 dark:bg-zinc-800/40">
+<summary class="flex cursor-pointer list-none items-center gap-3 py-4 text-sm font-semibold text-zinc-700 dark:text-zinc-200 [&::-webkit-details-marker]:hidden">
+<span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-600 text-xs font-bold text-white">+5</span>
+<span class="flex-1">More ablations — sample budget · Hutchinson variance reduction · cross-entropy · λ_ref · ODE steps</span>
+<svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+</summary>
+
+<div class="border-t border-zinc-200 pb-4 pt-3 dark:border-zinc-700">
+
+#### Sample budget $N$ — robust down to $N=2$
+
+Because local IS keeps proposal and target overlapping, FLAG stays strong even with only $N=2$ samples per update (default $N=8$). DMC Dog, return ÷1000, 10 seeds.
+
+<div class="not-prose mt-2 flex flex-wrap gap-2 text-center text-xs">
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="font-semibold text-zinc-500">N=2</div><div class="text-zinc-800">trot 0.620 · run 0.818</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="font-semibold text-zinc-500">N=4</div><div class="text-zinc-800">trot 0.639 · run 0.827</div></div>
+<div class="rounded-md border-2 border-teal-600 bg-teal-100 px-2.5 py-1.5"><div class="font-bold text-teal-700">N=8 ★</div><div class="font-semibold text-teal-900">trot 0.680 · run 0.912</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="font-semibold text-zinc-500">N=16</div><div class="text-zinc-800">trot 0.687 · run 0.874</div></div>
+<div class="rounded-md border border-zinc-300 bg-white/70 px-2.5 py-1.5"><div class="font-semibold text-zinc-500">N=32</div><div class="text-zinc-800">trot 0.641 · run 0.879</div></div>
+</div>
+
+#### Hutchinson variance reduction
+
+FLAG estimates $\log\tilde\pi$ with the Hutchinson trace estimator, sharing random tangent vectors across action samples (CRN). This both **accelerates learning** and **sharply reduces variance across seeds**, yielding more robust convergence.
+
+#### Cross-entropy surrogate
+
+Replacing the intractable entropy with the cross-entropy surrogate lets FLAG reach 90% of peak performance **≈10% faster on Dog-run and ≈41% faster on Dog-trot** than a no-cross-entropy variant, by regularizing against early value over-estimation.
+
+#### Trust-region temperature $\lambda_{\text{ref}}$
+
+$\lambda_{\text{ref}}$ sets how far each update may move from the reference policy. Both extremes hurt — too large is unstable, too small over-constrains — and $\lambda_{\text{ref}}=10$ is the most consistent across tasks.
+
+#### ODE solver steps
+
+Performance is **largely insensitive** to the number of flow-integration steps (tested 2–32) while runtime grows roughly linearly, so FLAG fixes **8 steps** as the efficiency sweet spot.
+
+</div>
+</details>
 
 
 {/* <Wide>
