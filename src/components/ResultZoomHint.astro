@@ -1,0 +1,520 @@
+---
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  thumbSrc: ImageMetadata;
+  detailSrc: ImageMetadata;
+  alt?: string;
+}
+
+const { thumbSrc, detailSrc, alt = "Expand result banners, then click figures for detailed view with caption" } =
+  Astro.props;
+---
+
+<div
+  class="result-zoom-hint not-prose my-4 flex flex-col gap-4 rounded-lg border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-950 shadow-sm sm:flex-row sm:items-center dark:border-emerald-500/50 dark:bg-emerald-900/40 dark:text-emerald-100"
+  aria-label={alt}
+>
+  <div class="rzh-demo mx-auto shrink-0 sm:mx-0" aria-hidden="true">
+    <div
+      class="rzh-stage relative flex h-[10.25rem] w-[12.25rem] flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm dark:border-zinc-600 dark:bg-zinc-900"
+    >
+      <div class="rzh-scene relative min-h-0 flex-1 overflow-hidden p-1.5">
+        {/* Collapsed Q banner */}
+        <div class="rzh-collapsed absolute inset-x-1.5 top-1.5 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800">
+          <div class="flex items-center gap-1 px-1.5 py-1">
+            <span
+              class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-700 text-[7px] font-bold text-white"
+              >Q1</span
+            >
+            <span class="min-w-0 flex-1 truncate text-[7px] font-semibold text-zinc-700 dark:text-zinc-200"
+              >Scale to high-dim actions?</span
+            >
+            <svg
+              class="rzh-chevron h-2.5 w-2.5 shrink-0 text-zinc-400"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+
+        {/* Expanded banners + nested sub */}
+        <div class="rzh-expanded-banners absolute inset-x-1.5 top-1.5 flex flex-col gap-0.5 overflow-hidden">
+          <div class="rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800">
+            <div class="flex items-center gap-1 border-b border-zinc-200 px-1.5 py-0.5 dark:border-zinc-600">
+              <span
+                class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-700 text-[7px] font-bold text-white"
+                >Q1</span
+              >
+              <span class="min-w-0 flex-1 truncate text-[7px] font-semibold text-zinc-700 dark:text-zinc-200"
+                >Scale to high-dim actions?</span
+              >
+              <svg class="h-2.5 w-2.5 shrink-0 rotate-180 text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+            <div class="mx-1 my-0.5 rounded border border-teal-200/80 bg-teal-50/80 px-1 py-0.5 dark:border-emerald-600/40 dark:bg-emerald-900/30">
+              <span class="text-[6px] font-bold text-teal-800 dark:text-emerald-200">A1: Scalable & robust</span>
+            </div>
+          </div>
+
+          <div class="rzh-sub rounded-md border border-zinc-200 bg-white dark:border-zinc-600 dark:bg-zinc-900/80">
+            <div class="flex items-center gap-1 px-1 py-0.5">
+              <span class="rounded-full bg-teal-700 px-1 py-px text-[6px] font-bold text-white">Q1.1</span>
+              <span class="truncate text-[6px] font-semibold text-zinc-700 dark:text-zinc-200">Scalable?</span>
+              <svg class="rzh-sub-chevron h-2 w-2 shrink-0 text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+            <div class="rzh-sub-body border-t border-zinc-100 px-1 pb-1 dark:border-zinc-700">
+              <div class="rzh-mini-figure mt-0.5 overflow-hidden rounded border border-zinc-200 bg-zinc-50 p-0.5 dark:border-zinc-600 dark:bg-zinc-800">
+                <img
+                  src={thumbSrc.src}
+                  width={thumbSrc.width}
+                  height={thumbSrc.height}
+                  alt=""
+                  class="h-7 w-full object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Banner expand click */}
+        <div class="rzh-banner-cursor pointer-events-none absolute inset-0">
+          <span class="rzh-banner-ring absolute top-[14%] right-[10%] h-3 w-3 rounded-full border-2 border-teal-500"></span>
+        </div>
+
+        {/* Figure zoom layers */}
+        <div class="rzh-zoom-thumb absolute inset-x-2 bottom-2 top-[52%] flex flex-col overflow-hidden rounded border border-zinc-200 bg-zinc-50 p-0.5 dark:border-zinc-600 dark:bg-zinc-800">
+          <img
+            src={thumbSrc.src}
+            width={thumbSrc.width}
+            height={thumbSrc.height}
+            alt=""
+            class="min-h-0 flex-1 object-contain"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="flex items-center justify-center gap-0.5 text-[6px] text-zinc-400">
+            <svg class="h-1.5 w-1.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35"></path>
+            </svg>
+            <span>Click to expand</span>
+          </div>
+        </div>
+
+        <div class="rzh-zoom-cursor pointer-events-none absolute inset-0">
+          <span class="rzh-zoom-ring absolute top-[62%] left-[55%] h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-teal-500"></span>
+          <svg
+            class="rzh-zoom-pointer absolute top-[66%] left-[58%] h-3 w-3 -translate-x-1/2 text-teal-700 dark:text-emerald-300"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M5.5 3.5l12 8.5-5.2.8 2.4 5.6-2.8 1.2-2.4-5.6-4 2.5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+
+        <div class="rzh-zoom-modal absolute inset-0 flex flex-col bg-zinc-950/85 p-1">
+          <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded border border-zinc-200 bg-white dark:border-zinc-600 dark:bg-zinc-950">
+            <img
+              src={detailSrc.src}
+              width={detailSrc.width}
+              height={detailSrc.height}
+              alt=""
+              class="min-h-0 flex-1 object-contain p-0.5"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="rzh-zoom-caption shrink-0 border-t border-zinc-200 bg-zinc-50 px-1 py-0.5 dark:border-zinc-700 dark:bg-zinc-900">
+              <div class="mb-0.5 h-0.5 w-[88%] rounded-full bg-zinc-300 dark:bg-zinc-600"></div>
+              <div class="h-0.5 w-[60%] rounded-full bg-zinc-200 dark:bg-zinc-700"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rzh-footer relative h-[1.35rem] shrink-0 border-t border-zinc-100 bg-zinc-50/90 dark:border-zinc-700 dark:bg-zinc-800/90">
+        <span class="rzh-footer-expand absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-[8px] font-semibold tracking-wide text-teal-700 uppercase dark:text-emerald-300">
+          Expand each banner
+        </span>
+        <span class="rzh-footer-zoom absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-[8px] font-semibold tracking-wide text-teal-700 uppercase dark:text-emerald-300">
+          Tap any result figure
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="leading-relaxed sm:flex-1">
+    <p>
+      <strong class="font-bold text-teal-900 dark:text-emerald-100">
+        Expand each banner to reveal results.
+      </strong>
+      <span class="text-teal-800 dark:text-emerald-200">
+        {" "}
+        Q1/Q2/Q3 cards and nested sub-banners (e.g., Q1.1) hide figures and tables until opened.
+      </span>
+    </p>
+    <p class="mt-1.5">
+      <strong class="font-bold text-teal-900 dark:text-emerald-100">
+        Click images to view detailed figure/table with caption.
+      </strong>
+      <span class="text-teal-800 dark:text-emerald-200">
+        {" "}
+        Cards show clean caption-free previews; the enlarged view shows the original caption from the
+        paper.
+      </span>
+    </p>
+  </div>
+</div>
+
+<style>
+  .rzh-collapsed {
+    animation: rzh-collapsed-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-expanded-banners {
+    animation: rzh-expanded-banners-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-sub-body {
+    animation: rzh-sub-body-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-sub-chevron {
+    animation: rzh-sub-chevron-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-banner-cursor {
+    animation: rzh-banner-cursor-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-banner-ring {
+    animation: rzh-banner-ring-pulse 9s ease-in-out infinite;
+  }
+
+  .rzh-zoom-thumb {
+    animation: rzh-zoom-thumb-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-zoom-cursor {
+    animation: rzh-zoom-cursor-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-zoom-ring {
+    animation: rzh-zoom-ring-pulse 9s ease-in-out infinite;
+  }
+
+  .rzh-zoom-pointer {
+    animation: rzh-zoom-pointer-tap 9s ease-in-out infinite;
+  }
+
+  .rzh-zoom-modal {
+    animation: rzh-zoom-modal-cycle 9s ease-in-out infinite;
+    transform-origin: center center;
+  }
+
+  .rzh-zoom-caption {
+    animation: rzh-zoom-caption-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-footer-expand {
+    animation: rzh-footer-expand-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-footer-zoom {
+    animation: rzh-footer-zoom-cycle 9s ease-in-out infinite;
+  }
+
+  .rzh-chevron {
+    animation: rzh-chevron-cycle 9s ease-in-out infinite;
+  }
+
+  @keyframes rzh-collapsed-cycle {
+    0%,
+    22% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    28%,
+    100% {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes rzh-expanded-banners-cycle {
+    0%,
+    24% {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    30%,
+    52% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    58%,
+    100% {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+  }
+
+  @keyframes rzh-sub-body-cycle {
+    0%,
+    34% {
+      opacity: 0;
+      max-height: 0;
+    }
+    40%,
+    52% {
+      opacity: 1;
+      max-height: 2.5rem;
+    }
+    58%,
+    100% {
+      opacity: 0;
+      max-height: 0;
+    }
+  }
+
+  @keyframes rzh-sub-chevron-cycle {
+    0%,
+    36% {
+      transform: rotate(0deg);
+    }
+    42%,
+    100% {
+      transform: rotate(180deg);
+    }
+  }
+
+  @keyframes rzh-banner-cursor-cycle {
+    0%,
+    14% {
+      opacity: 0;
+    }
+    18%,
+    24% {
+      opacity: 1;
+    }
+    28%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rzh-banner-ring-pulse {
+    0%,
+    16% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    20% {
+      opacity: 0.85;
+      transform: scale(1);
+    }
+    24% {
+      opacity: 0;
+      transform: scale(1.4);
+    }
+    25%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rzh-chevron-cycle {
+    0%,
+    20% {
+      transform: rotate(0deg);
+    }
+    26%,
+    100% {
+      transform: rotate(180deg);
+    }
+  }
+
+  @keyframes rzh-zoom-thumb-cycle {
+    0%,
+    52% {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+    58%,
+    66% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    72%,
+    100% {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+  }
+
+  @keyframes rzh-zoom-cursor-cycle {
+    0%,
+    58% {
+      opacity: 0;
+    }
+    62%,
+    68% {
+      opacity: 1;
+    }
+    72%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rzh-zoom-ring-pulse {
+    0%,
+    60% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.5);
+    }
+    64% {
+      opacity: 0.9;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    68% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1.35);
+    }
+    69%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rzh-zoom-pointer-tap {
+    0%,
+    62% {
+      transform: translate(-50%, 0) scale(1);
+    }
+    66% {
+      transform: translate(-50%, 1px) scale(0.92);
+    }
+    70%,
+    100% {
+      transform: translate(-50%, 0) scale(1);
+    }
+  }
+
+  @keyframes rzh-zoom-modal-cycle {
+    0%,
+    66% {
+      opacity: 0;
+      transform: scale(0.84);
+    }
+    74%,
+    86% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    92%,
+    100% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+  }
+
+  @keyframes rzh-zoom-caption-cycle {
+    0%,
+    74% {
+      opacity: 0;
+      transform: translateY(3px);
+    }
+    80%,
+    86% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    92%,
+    100% {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+  }
+
+  @keyframes rzh-footer-expand-cycle {
+    0%,
+    52% {
+      opacity: 1;
+    }
+    58%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rzh-footer-zoom-cycle {
+    0%,
+    54% {
+      opacity: 0;
+    }
+    60%,
+    88% {
+      opacity: 1;
+    }
+    94%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rzh-collapsed,
+    .rzh-expanded-banners,
+    .rzh-sub-body,
+    .rzh-banner-cursor,
+    .rzh-zoom-thumb,
+    .rzh-zoom-cursor,
+    .rzh-zoom-modal,
+    .rzh-footer-expand,
+    .rzh-footer-zoom {
+      animation: none;
+    }
+
+    .rzh-collapsed {
+      opacity: 0;
+    }
+
+    .rzh-expanded-banners {
+      opacity: 1;
+      transform: none;
+    }
+
+    .rzh-sub-body {
+      opacity: 1;
+      max-height: 2.5rem;
+    }
+
+    .rzh-zoom-thumb,
+    .rzh-zoom-cursor,
+    .rzh-banner-cursor {
+      display: none;
+    }
+
+    .rzh-zoom-modal {
+      opacity: 0;
+    }
+
+    .rzh-footer-expand {
+      opacity: 1;
+    }
+
+    .rzh-footer-zoom {
+      opacity: 0;
+    }
+  }
+</style>

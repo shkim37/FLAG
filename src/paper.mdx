@@ -68,6 +68,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/starwind/
 import { Comparison } from "./components/Comparison.tsx";
 import QCard from "./components/QCard.astro";
 import ResultQCard from "./components/ResultQCard.astro";
+import ResultZoomImage from "./components/ResultZoomImage.astro";
+import ResultZoomHint from "./components/ResultZoomHint.astro";
+import MethodHint from "./components/MethodHint.astro";
 import IdeaTabs from "./components/IdeaTabs.astro";
 import EqBox from "./components/EqBox.astro";
 import ProofRoadmap from "./components/ProofRoadmap.astro";
@@ -81,9 +84,22 @@ import highdimenv from "./assets/new_5_1_scatter.png"
 import localizedEM from "./assets/localized_EM_algorithm.png"
 import mpoProofRoadmap from "./assets/MPO_proof_hq.png"
 import sacProofRoadmap from "./assets/SAC_proof_hq.png"
-import table2DmcDog from "./assets/table2_dmc_dog.png"
-import table2MyoSuite from "./assets/table2_myo_suite.png"
-import figure4WithoutCrossQ from "./assets/figure4_without_crossq.png"
+import q1Figure3Thumb from "./assets/q1_figure3_thumb.png"
+import q1Figure3Detail from "./assets/q1_figure3_detail.png"
+import q1Figure4WithoutCrossQThumb from "./assets/q1_figure4_without_crossq_thumb.png"
+import q1Figure4WithoutCrossQDetail from "./assets/q1_figure4_without_crossq_detail.png"
+import q1Table1Thumb from "./assets/q1_table1_thumb.png"
+import q1Table1Detail from "./assets/q1_table1_detail.png"
+import q1Figure9P1Thumb from "./assets/q1_figure9_p1_thumb.png"
+import q1Figure9P1Detail from "./assets/q1_figure9_p1_detail.png"
+import q1Figure10P32Thumb from "./assets/q1_figure10_p32_thumb.png"
+import q1Figure10P32Detail from "./assets/q1_figure10_p32_detail.png"
+import q2Table2Thumb from "./assets/q2_table2_thumb.png"
+import q2Table2Detail from "./assets/q2_table2_detail.png"
+import q2Figure11Thumb from "./assets/q2_figure11_thumb.png"
+import q2Figure11Detail from "./assets/q2_figure11_detail.png"
+import q2Table8WithoutCrossQThumb from "./assets/q2_table8_without_crossq_thumb.png"
+import q2Table8WithoutCrossQDetail from "./assets/q2_table8_without_crossq_detail.png"
 
 {/* <Video src={outside} /> */}
 
@@ -141,7 +157,7 @@ so reweighting happens inside a shared local region.
 
 </ColorBox>
 
-We first illustrate this effect in a controlled multi-goal task, then show the same pattern in high-dimensional continuous control.
+We first illustrate this effect in a controlled multi-goal task then show the same pattern in high-dimensional continuous control tasks in the Result section.
 
 {/* ### Multi-goal Environment
 
@@ -167,12 +183,12 @@ We first illustrate this effect in a controlled multi-goal task, then show the s
   <Fragment slot="caption">The multi-goal task isolates the small-sample regime: global-IS baselines fail when $N \le 8$, while FLAG recovers the optimal multi-modal behavior with only $N = 2$ samples.</Fragment>
 </Figure>
 
-### High-dimensional Continuous Control Environment
+{/* ### High-dimensional Continuous Control Environment
 
 <Figure>
   <Picture slot="figure" src={highdimenv} alt="Comparison of global and local importance sampling in a high-dimensional continuous control environment" />
   <Fragment slot="caption">The same issue appears in high-dimensional control. Global-IS methods compensate with batch action sampling, but even with many candidates they remain less efficient and lower-performing than FLAG.</Fragment>
-</Figure>
+</Figure> */}
 
 {/* ### How to Make Local IS Framework Work?
 
@@ -191,22 +207,7 @@ and making MaxEnt-RL scalable.
 
 ## Method
 
-
-
-<div class="not-prose my-4 flex flex-wrap items-center gap-x-2 gap-y-2 text-xs text-zinc-500 dark:text-zinc-400">
-  <span class="font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-300">Each card walks through</span>
-  <span class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-red-700 dark:border-rose-700/40 dark:bg-rose-950/50 dark:text-rose-300">
-    <span class="h-1.5 w-1.5 rounded-full bg-red-400 dark:bg-rose-400"></span>Challenge
-  </span>
-  <span class="text-zinc-400 dark:text-zinc-500">→</span>
-  <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-blue-700 dark:border-sky-700/40 dark:bg-sky-950/50 dark:text-sky-300">
-    <span class="h-1.5 w-1.5 rounded-full bg-blue-400 dark:bg-sky-400"></span>Solution
-  </span>
-  <span class="text-zinc-400 dark:text-zinc-500">→</span>
-  <span class="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-teal-700 dark:border-emerald-700/40 dark:bg-emerald-950/50 dark:text-emerald-300">
-    <span class="h-1.5 w-1.5 rounded-full bg-teal-500 dark:bg-emerald-400"></span>Bottom Line
-  </span>
-</div>
+<MethodHint />
 
 <QCard number="Q1" title="How do we construct local IS, and is it consistent with the original MDP?">
 
@@ -402,102 +403,112 @@ Monotonic improvement is established from **two complementary perspectives — M
 
 We present the results around the three questions used in Section 5 of the paper.
 
+<ResultZoomHint
+  thumbSrc={q1Figure3Thumb}
+  detailSrc={q1Figure3Detail}
+  alt="Figure 3 preview expanding to detailed view with caption"
+/>
+
+<div class="not-prose mb-5 rounded-lg border border-teal-200 bg-teal-50 px-4 py-3 text-sm leading-relaxed text-teal-950 dark:border-emerald-500/50 dark:bg-emerald-900/40 dark:text-emerald-100">
+  <div class="mb-1.5 text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-emerald-300">Term used in experiments</div>
+  <p><strong class="font-bold text-teal-800 dark:text-emerald-200">best-of-P:</strong> when sampling actions from the policy (e.g., during rollout and policy update), <em>P</em> candidate actions are drawn and the one with the highest Q-value is selected.</p>
+</div>
+
 <ResultQCard
   number="Q1"
   question="Does FLAG scale to high-dimensional action spaces under limited sample budgets?"
   answer="FLAG is Scalable to High-dimensional Action Spaces and Robust to Sample Budget"
 >
-  <Tabs defaultValue="q1-1">
-    <TabsList>
-      <TabsTrigger value="q1-1"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[9px] font-bold text-white">Q</span>1.1 Scalability</TabsTrigger>
-      <TabsTrigger value="q1-2"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[9px] font-bold text-white">Q</span>1.2 Sample Budget</TabsTrigger>
-      <TabsTrigger value="q1-p1">Full Results: P=1</TabsTrigger>
-      <TabsTrigger value="q1-p32">Full Results: P=32</TabsTrigger>
-    </TabsList>
+  <div class="flex flex-col gap-3">
 
-    <TabsContent value="q1-1" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
-      <div class="mb-3 text-sm">
-        <div class="font-bold text-zinc-900 dark:text-zinc-100">Is FLAG Scale to high-dimensional action space?</div>
-        <p class="mt-1 text-zinc-600 dark:text-zinc-300">FLAG stays in the high-return, low-runtime region as action dimensionality increases, while global-proposal baselines degrade or require larger best-of-P budgets.</p>
+    <details class="group/sub rounded-lg border border-zinc-200 bg-white open:shadow-sm dark:border-zinc-700 dark:bg-zinc-900/40">
+      <summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40 [&::-webkit-details-marker]:hidden">
+        <span class="inline-flex shrink-0 items-center rounded-full bg-teal-700 px-3 py-1 text-xs font-bold text-white">Q1.1</span>
+        <span class="flex-1 text-sm font-semibold text-zinc-800 dark:text-zinc-100 md:text-base">Is FLAG scalable to high-dimensional action spaces?</span>
+        <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform duration-300 group-open/sub:rotate-180 dark:text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+      </summary>
+      <div class="border-t border-zinc-200 px-4 pb-4 pt-3 dark:border-zinc-700">
+        <p class="mb-3 text-sm text-zinc-600 dark:text-zinc-300">FLAG stays in the high-return, low-runtime region as action dimensionality increases, while global-proposal baselines degrade or require larger best-of-P budgets.</p>
+        <Tabs defaultValue="q1-scale-with-crossq">
+          <TabsList class="flex flex-wrap gap-1 rounded-full bg-zinc-100 p-1 dark:bg-zinc-800">
+            <TabsTrigger value="q1-scale-with-crossq" class="gap-1.5 px-4 py-1 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-teal-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-teal-600 dark:bg-emerald-400"></span>With CrossQ</TabsTrigger>
+            <TabsTrigger value="q1-scale-without-crossq" class="gap-1.5 px-4 py-1 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-teal-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-teal-600 dark:bg-emerald-400"></span>Without CrossQ</TabsTrigger>
+          </TabsList>
+          <TabsContent value="q1-scale-with-crossq" class="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
+            <ResultZoomImage
+              id="q1-figure3"
+              src={q1Figure3Thumb}
+              detailSrc={q1Figure3Detail}
+              alt="Figure 3 comparing performance and GPU hours for global and local proposal sampling across MuJoCo, DMC Dog, and MyoSuite"
+            />
+          </TabsContent>
+          <TabsContent value="q1-scale-without-crossq" class="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
+            <ResultZoomImage
+              id="q1-figure4-without-crossq"
+              src={q1Figure4WithoutCrossQThumb}
+              detailSrc={q1Figure4WithoutCrossQDetail}
+              alt="Figure 4 DMC Dog-run and Dog-trot comparison without CrossQ"
+            />
+          </TabsContent>
+        </Tabs>
       </div>
-      <div class="grid gap-4 sm:grid-cols-2">
+    </details>
+
+    <details class="group/sub rounded-lg border border-zinc-200 bg-white open:shadow-sm dark:border-zinc-700 dark:bg-zinc-900/40">
+      <summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40 [&::-webkit-details-marker]:hidden">
+        <span class="inline-flex shrink-0 items-center rounded-full bg-teal-700 px-3 py-1 text-xs font-bold text-white">Q1.2</span>
+        <span class="flex-1 text-sm font-semibold text-zinc-800 dark:text-zinc-100 md:text-base">Is FLAG robust to the sample budget?</span>
+        <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform duration-300 group-open/sub:rotate-180 dark:text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+      </summary>
+      <div class="border-t border-zinc-200 px-4 pb-4 pt-3 dark:border-zinc-700">
+        <p class="mb-3 text-sm text-zinc-600 dark:text-zinc-300">Local proposal matching keeps importance samples informative even when the update uses only a small number of samples.</p>
         <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
-          <div class="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">With CrossQ + limited Sample budget</div>
-          <Figure>
-            <Picture slot="figure" src={highdimenv} alt="Figure 3 comparing performance and GPU hours for global and local proposal sampling across MuJoCo, DMC Dog, and MyoSuite" />
-            <Fragment slot="caption">Figure 3: Performance and computational efficiency of global and local proposal sampling.</Fragment>
-          </Figure>
-        </div>
-        <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
-          <div class="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">Without CrossQ + Default Sample budget</div>
-          <Figure>
-            <Picture slot="figure" src={figure4WithoutCrossQ} alt="Figure 4 DMC Dog-run and Dog-trot comparison without CrossQ" />
-            <Fragment slot="caption">Figure 4: Comparison on DMC Dog-run and Dog-trot without CrossQ.</Fragment>
-          </Figure>
+          <ResultZoomImage
+            id="q1-table1"
+            src={q1Table1Thumb}
+            detailSrc={q1Table1Detail}
+            alt="Table 1 ablation study on the number of training samples in DMC Dog tasks"
+          />
         </div>
       </div>
-    </TabsContent>
+    </details>
 
-    <TabsContent value="q1-2" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
-      <div class="mb-3 text-sm">
-        <div class="font-bold text-zinc-900 dark:text-zinc-100">Is FLAG robust to the sample budget?</div>
-        <p class="mt-1 text-zinc-600 dark:text-zinc-300">Local proposal matching keeps importance samples informative even when the update uses only a small number of samples.</p>
+    <details class="group/sub rounded-lg border border-zinc-200 bg-white open:shadow-sm dark:border-zinc-700 dark:bg-zinc-900/40">
+      <summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40 [&::-webkit-details-marker]:hidden">
+        <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white dark:bg-sky-400 dark:text-sky-950">
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l3-3 3 3 5-6"></path></svg>
+          <span>Learning curve</span>
+        </span>
+        <span class="flex-1 text-sm font-semibold text-zinc-800 dark:text-zinc-100 md:text-base">Learning Curves</span>
+        <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform duration-300 group-open/sub:rotate-180 dark:text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+      </summary>
+      <div class="border-t border-zinc-200 px-4 pb-4 pt-3 dark:border-zinc-700">
+        <Tabs defaultValue="q1-learning-without-best-of-p">
+          <TabsList class="flex flex-wrap gap-1 rounded-full bg-zinc-100 p-1 dark:bg-zinc-800">
+            <TabsTrigger value="q1-learning-without-best-of-p" class="gap-1.5 px-4 py-1 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-teal-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-sky-400"></span>Without best-of-P</TabsTrigger>
+            <TabsTrigger value="q1-learning-with-best-of-p" class="gap-1.5 px-4 py-1 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-teal-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-sky-400"></span>With best-of-P (P=32)</TabsTrigger>
+          </TabsList>
+          <TabsContent value="q1-learning-without-best-of-p" class="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
+            <ResultZoomImage
+              id="q1-figure9-p1"
+              src={q1Figure9P1Thumb}
+              detailSrc={q1Figure9P1Detail}
+              alt="Figure 9 full learning curves of Figure 3 without best-of-P"
+            />
+          </TabsContent>
+          <TabsContent value="q1-learning-with-best-of-p" class="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
+            <ResultZoomImage
+              id="q1-figure10-p32"
+              src={q1Figure10P32Thumb}
+              detailSrc={q1Figure10P32Detail}
+              alt="Figure 10 full learning curves of Figure 3 with best-of-P P equals 32"
+            />
+          </TabsContent>
+        </Tabs>
       </div>
-      <div class="overflow-x-auto rounded-lg border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900/40">
-        <table class="min-w-full border-collapse text-left text-sm">
-          <thead class="bg-zinc-100 text-xs uppercase tracking-wide text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-            <tr>
-              <th class="px-3 py-2 font-bold">Num. Samples</th>
-              <th class="px-3 py-2 text-center font-bold">Dog-trot Return (1k)</th>
-              <th class="px-3 py-2 text-center font-bold">Dog-run Return (1k)</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-            <tr>
-              <td class="px-3 py-2 font-semibold">N = 2</td>
-              <td class="px-3 py-2 text-center">0.620 ± 0.072</td>
-              <td class="px-3 py-2 text-center">0.818 ± 0.095</td>
-            </tr>
-            <tr>
-              <td class="px-3 py-2 font-semibold">N = 4</td>
-              <td class="px-3 py-2 text-center">0.639 ± 0.061</td>
-              <td class="px-3 py-2 text-center">0.827 ± 0.106</td>
-            </tr>
-            <tr>
-              <td class="px-3 py-2 font-semibold">N = 8</td>
-              <td class="px-3 py-2 text-center">0.680 ± 0.066</td>
-              <td class="px-3 py-2 text-center">0.912 ± 0.047</td>
-            </tr>
-            <tr>
-              <td class="px-3 py-2 font-semibold">N = 16</td>
-              <td class="px-3 py-2 text-center">0.687 ± 0.073</td>
-              <td class="px-3 py-2 text-center">0.874 ± 0.087</td>
-            </tr>
-            <tr>
-              <td class="px-3 py-2 font-semibold">N = 32</td>
-              <td class="px-3 py-2 text-center">0.641 ± 0.075</td>
-              <td class="px-3 py-2 text-center">0.879 ± 0.057</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="mt-2 text-xs italic text-zinc-500 dark:text-zinc-400">Table 1: DMC Dog tasks, IQM over 10 seeds at 1M steps.</div>
-    </TabsContent>
+    </details>
 
-    <TabsContent value="q1-p1" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
-      <Figure>
-        <Picture slot="figure" src="../assets/5_1_learning_curves_p1.pdf" alt="Figure 9 full learning curves for Figure 3 with P equals 1" />
-        <Fragment slot="caption">Figure 9: Full learning curves of Figure 3 (P=1).</Fragment>
-      </Figure>
-    </TabsContent>
-
-    <TabsContent value="q1-p32" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
-      <Figure>
-        <Picture slot="figure" src="../assets/5_1_learning_curves_p32.pdf" alt="Figure 10 full learning curves for Figure 3 with P equals 32" />
-        <Fragment slot="caption">Figure 10: Full learning curves of Figure 3 (P=32).</Fragment>
-      </Figure>
-    </TabsContent>
-  </Tabs>
+  </div>
 </ResultQCard>
 
 <ResultQCard
@@ -506,160 +517,49 @@ We present the results around the three questions used in Section 5 of the paper
   answer="FLAG Outperforms BPTT-based Actor-Critic and Action Gradient Methods"
 >
   <Tabs defaultValue="q2-with-crossq">
-    <TabsList>
-      <TabsTrigger value="q2-with-crossq"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[9px] font-bold text-white">Q</span>With CrossQ</TabsTrigger>
-      <TabsTrigger value="q2-without-crossq"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[9px] font-bold text-white">Q</span>Without CrossQ</TabsTrigger>
+    <TabsList class="rounded-full bg-zinc-100 p-1 dark:bg-zinc-800">
+      <TabsTrigger value="q2-with-crossq" class="gap-1.5 px-4 py-1 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-teal-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-teal-600 dark:bg-emerald-400"></span>With CrossQ</TabsTrigger>
+      <TabsTrigger value="q2-without-crossq" class="gap-1.5 px-4 py-1 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-teal-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-teal-600 dark:bg-emerald-400"></span>Without CrossQ</TabsTrigger>
     </TabsList>
 
     <TabsContent value="q2-with-crossq" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
-      <Tabs defaultValue="q2-dmc">
-        <TabsList>
-          <TabsTrigger value="q2-dmc">DMC-Dog</TabsTrigger>
-          <TabsTrigger value="q2-myo">Myo-Suite</TabsTrigger>
-          <TabsTrigger value="q2-learning">Full Results</TabsTrigger>
+      <Tabs defaultValue="q2-table2">
+        <TabsList class="flex flex-wrap gap-1 rounded-full bg-zinc-100 p-1 dark:bg-zinc-800">
+          <TabsTrigger value="q2-table2" class="gap-1.5 px-4 py-1 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-teal-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-red-600 dark:bg-amber-400"></span>DMC-Dog & Myo-Suite</TabsTrigger>
+          <TabsTrigger value="q2-learning-curves" class="gap-1.5 px-4 py-1 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-teal-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-sky-400"></span>MuJoCo (Learning Curve)</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="q2-dmc" class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
-          <Figure>
-            <Picture slot="figure" src={table2DmcDog} alt="Table 2 DMC Dog IQM final performance after 1M environment steps" />
-            <Fragment slot="caption">Table 2: DMC Dog final performance with CrossQ.</Fragment>
-          </Figure>
+        <TabsContent value="q2-table2" class="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
+          <ResultZoomImage
+            id="q2-table2"
+            src={q2Table2Thumb}
+            detailSrc={q2Table2Detail}
+            alt="Table 2 IQM final performance on DMC Dog and MyoSuite"
+          />
         </TabsContent>
-
-        <TabsContent value="q2-myo" class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
-          <Figure>
-            <Picture slot="figure" src={table2MyoSuite} alt="Table 2 MyoSuite IQM final performance after 1M environment steps" />
-            <Fragment slot="caption">Table 2: MyoSuite final performance with CrossQ.</Fragment>
-          </Figure>
-        </TabsContent>
-
-        <TabsContent value="q2-learning" class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
-          <Figure>
-            <Picture slot="figure" src="../assets/5_2_learning_curves.pdf" alt="Figure 11 learning curves for other diffusion and flow-matching algorithms in four MuJoCo tasks" />
-            <Fragment slot="caption">Figure 11: Learning curves for diffusion and flow-matching algorithms in four MuJoCo tasks.</Fragment>
-          </Figure>
+        <TabsContent value="q2-learning-curves" class="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
+          <ResultZoomImage
+            id="q2-figure11"
+            src={q2Figure11Thumb}
+            detailSrc={q2Figure11Detail}
+            alt="Figure 11 learning curves for diffusion and flow-matching algorithms in four MuJoCo tasks"
+          />
         </TabsContent>
       </Tabs>
     </TabsContent>
 
     <TabsContent value="q2-without-crossq" class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
-      <div class="mb-3 text-sm text-zinc-600 dark:text-zinc-300">
-        Without CrossQ, critic gradients become less reliable. FLAG remains effective because it aggregates critic signals into target actions rather than differentiating through the critic directly.
+      <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
+        <ResultZoomImage
+          id="q2-table8-without-crossq"
+          src={q2Table8WithoutCrossQThumb}
+          detailSrc={q2Table8WithoutCrossQDetail}
+          alt="Table 8 DMC Dog performance without CrossQ in Section 5.1"
+        />
       </div>
-      <div class="overflow-x-auto rounded-lg border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900/40">
-        <table class="min-w-full border-collapse text-left text-xs">
-          <thead>
-            <tr class="bg-zinc-100 dark:bg-zinc-800">
-              <th class="px-2 py-2 font-bold text-zinc-700 dark:text-zinc-300">P</th>
-              <th class="px-2 py-2 font-bold text-zinc-700 dark:text-zinc-300">N</th>
-              <th class="px-2 py-2 font-bold text-zinc-700 dark:text-zinc-300">Alg.</th>
-              <th class="px-2 py-2 text-center font-bold text-zinc-700 dark:text-zinc-300">Dog-trot Return (1k) ↑</th>
-              <th class="px-2 py-2 text-center font-bold text-zinc-700 dark:text-zinc-300">ΔF ↓</th>
-              <th class="px-2 py-2 text-center font-bold text-zinc-700 dark:text-zinc-300">Dog-run Return (1k) ↑</th>
-              <th class="px-2 py-2 text-center font-bold text-zinc-700 dark:text-zinc-300">ΔF ↓</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-            <tr>
-              <td class="px-2 py-1.5">1</td>
-              <td class="px-2 py-1.5">64</td>
-              <td class="px-2 py-1.5 font-medium">SDAC</td>
-              <td class="px-2 py-1.5 text-center">0.008 ± 0.001</td>
-              <td class="px-2 py-1.5 text-center">0.984</td>
-              <td class="px-2 py-1.5 text-center">0.006 ± 0.000</td>
-              <td class="px-2 py-1.5 text-center">0.980</td>
-            </tr>
-            <tr>
-              <td class="px-2 py-1.5">1</td>
-              <td class="px-2 py-1.5">64</td>
-              <td class="px-2 py-1.5 font-medium">DPMD</td>
-              <td class="px-2 py-1.5 text-center">0.013 ± 0.008</td>
-              <td class="px-2 py-1.5 text-center">0.974</td>
-              <td class="px-2 py-1.5 text-center">0.006 ± 0.002</td>
-              <td class="px-2 py-1.5 text-center">0.980</td>
-            </tr>
-            <tr>
-              <td class="px-2 py-1.5">1</td>
-              <td class="px-2 py-1.5">64</td>
-              <td class="px-2 py-1.5 font-medium">QVPO</td>
-              <td class="px-2 py-1.5 text-center">0.020 ± 0.022</td>
-              <td class="px-2 py-1.5 text-center">0.960</td>
-              <td class="px-2 py-1.5 text-center">0.039 ± 0.036</td>
-              <td class="px-2 py-1.5 text-center">0.872</td>
-            </tr>
-            <tr>
-              <td class="px-2 py-1.5">1</td>
-              <td class="px-2 py-1.5">500</td>
-              <td class="px-2 py-1.5 font-medium">MaxEntDP†</td>
-              <td class="px-2 py-1.5 text-center">0.007 ± 0.001</td>
-              <td class="px-2 py-1.5 text-center">0.986</td>
-              <td class="px-2 py-1.5 text-center">0.005 ± 0.001</td>
-              <td class="px-2 py-1.5 text-center">0.984</td>
-            </tr>
-            <tr class="border-t-2 border-zinc-300 dark:border-zinc-600">
-              <td class="px-2 py-1.5">32</td>
-              <td class="px-2 py-1.5">64</td>
-              <td class="px-2 py-1.5 font-medium">SDAC†</td>
-              <td class="px-2 py-1.5 text-center">0.019 ± 0.023</td>
-              <td class="px-2 py-1.5 text-center">0.962</td>
-              <td class="px-2 py-1.5 text-center">0.007 ± 0.002</td>
-              <td class="px-2 py-1.5 text-center">0.977</td>
-            </tr>
-            <tr>
-              <td class="px-2 py-1.5">32</td>
-              <td class="px-2 py-1.5">1</td>
-              <td class="px-2 py-1.5 font-medium">DPMD†</td>
-              <td class="px-2 py-1.5 text-center bg-teal-50 dark:bg-emerald-950/30 italic">0.117 ± 0.125</td>
-              <td class="px-2 py-1.5 text-center bg-teal-50 dark:bg-emerald-950/30 italic">0.766</td>
-              <td class="px-2 py-1.5 text-center">0.023 ± 0.016</td>
-              <td class="px-2 py-1.5 text-center">0.924</td>
-            </tr>
-            <tr>
-              <td class="px-2 py-1.5">4</td>
-              <td class="px-2 py-1.5">64</td>
-              <td class="px-2 py-1.5 font-medium">QVPO†</td>
-              <td class="px-2 py-1.5 text-center">0.077 ± 0.082</td>
-              <td class="px-2 py-1.5 text-center">0.846</td>
-              <td class="px-2 py-1.5 text-center">0.045 ± 0.054</td>
-              <td class="px-2 py-1.5 text-center">0.852</td>
-            </tr>
-            <tr class="border-t-2 border-zinc-300 dark:border-zinc-600">
-              <td class="px-2 py-1.5 text-zinc-400" colspan="3">
-                <span class="font-bold italic text-zinc-600 dark:text-zinc-400">BPTT-based methods</span>
-              </td>
-              <td colspan="4"></td>
-            </tr>
-            <tr>
-              <td class="px-2 py-1.5">--</td>
-              <td class="px-2 py-1.5">--</td>
-              <td class="px-2 py-1.5 font-medium">DIME†</td>
-              <td class="px-2 py-1.5 text-center">0.088 ± 0.073</td>
-              <td class="px-2 py-1.5 text-center">0.824</td>
-              <td class="px-2 py-1.5 text-center">0.025 ± 0.033</td>
-              <td class="px-2 py-1.5 text-center">0.918</td>
-            </tr>
-            <tr>
-              <td class="px-2 py-1.5">--</td>
-              <td class="px-2 py-1.5">--</td>
-              <td class="px-2 py-1.5 font-medium">DACERv2†</td>
-              <td class="px-2 py-1.5 text-center">0.107 ± 0.043</td>
-              <td class="px-2 py-1.5 text-center">0.786</td>
-              <td class="px-2 py-1.5 text-center bg-teal-50 dark:bg-emerald-950/30 italic">0.065 ± 0.059</td>
-              <td class="px-2 py-1.5 text-center bg-teal-50 dark:bg-emerald-950/30 italic">0.786</td>
-            </tr>
-            <tr class="border-t-2 border-zinc-300 bg-teal-50 dark:border-zinc-600 dark:bg-emerald-950/30">
-              <td class="px-2 py-1.5 font-bold text-teal-800 dark:text-emerald-200">1</td>
-              <td class="px-2 py-1.5 font-bold text-teal-800 dark:text-emerald-200">8</td>
-              <td class="px-2 py-1.5 font-bold text-teal-800 dark:text-emerald-200">FLAG†(ours)</td>
-              <td class="px-2 py-1.5 text-center font-bold text-teal-900 dark:text-emerald-100">0.500 ± 0.026</td>
-              <td class="px-2 py-1.5 text-center font-bold text-teal-900 dark:text-emerald-100">0.0</td>
-              <td class="px-2 py-1.5 text-center font-bold text-teal-900 dark:text-emerald-100">0.304 ± 0.027</td>
-              <td class="px-2 py-1.5 text-center font-bold text-teal-900 dark:text-emerald-100">0.0</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="mt-3 rounded-lg border border-teal-200 bg-teal-50 px-4 py-3 text-sm leading-relaxed text-teal-950 dark:border-emerald-500/50 dark:bg-emerald-900/40 dark:text-emerald-100">
+        <p><strong class="text-teal-800 dark:text-emerald-200">Without CrossQ,</strong> critic gradients become less reliable.</p>
+        <p class="mt-2">FLAG remains effective because it aggregates critic signals into target actions rather than differentiating through the critic directly.</p>
       </div>
-      <div class="mt-2 text-xs italic text-zinc-500 dark:text-zinc-400">Table 9: DMC Dog performance without CrossQ. ΔF = relative performance drop from FLAG. Best highlighted in teal; 2nd-best in light teal italic.</div>
     </TabsContent>
   </Tabs>
 </ResultQCard>
@@ -670,8 +570,14 @@ We present the results around the three questions used in Section 5 of the paper
   answer="FLAG Key Design Choices Align with Theoretical Results"
 >
   <div class="flex flex-col gap-4">
-    <section class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
-      <div class="mb-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">A3.1 Covariance Scheduling</div>
+    <details class="group/sub rounded-lg border border-zinc-200 bg-white open:shadow-sm dark:border-zinc-700 dark:bg-zinc-900/40">
+      <summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40 [&::-webkit-details-marker]:hidden">
+        <span class="inline-flex shrink-0 items-center rounded-full bg-teal-700 px-3 py-1 text-xs font-bold text-white">A3.1</span>
+        <span class="flex-1 text-sm font-semibold text-zinc-800 dark:text-zinc-100 md:text-base">Covariance Scheduling</span>
+        <a href="#Q3" onclick="event.stopPropagation()" class="not-prose shrink-0 inline-flex items-center gap-1.5 rounded-full border border-teal-700/40 bg-white/80 px-2.5 py-1 text-xs font-semibold text-teal-800! no-underline! transition-colors hover:bg-teal-50"><span class="inline-block h-1.5 w-1.5 rounded-full bg-teal-600"></span>Controls σ²ₖ · Theorem 4.5 (Q3) ↑</a>
+        <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform duration-300 group-open/sub:rotate-180 dark:text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+      </summary>
+      <div class="border-t border-zinc-200 px-4 pb-4 pt-3 dark:border-zinc-700">
       <p class="mb-3 text-sm text-zinc-600 dark:text-zinc-300">Annealing the local covariance suppresses the covariance-dependent reward drift in Theorem 4.5 while preserving enough early exploration.</p>
       <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
         <table class="min-w-[720px] border-collapse text-center text-xs">
@@ -704,13 +610,20 @@ We present the results around the three questions used in Section 5 of the paper
         </table>
       </div>
       <div class="mt-2 text-xs italic text-zinc-500 dark:text-zinc-400">DMC Dog-run, 5 seeds. -2(-3) is the default used in Section 5.1 and 5.2.</div>
-    </section>
+      </div>
+    </details>
 
-    <section class="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900/40">
-      <div class="mb-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">A3.2 Guidance Buffer</div>
+    <details class="group/sub rounded-lg border border-zinc-200 bg-white open:shadow-sm dark:border-zinc-700 dark:bg-zinc-900/40">
+      <summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40 [&::-webkit-details-marker]:hidden">
+        <span class="inline-flex shrink-0 items-center rounded-full bg-teal-700 px-3 py-1 text-xs font-bold text-white">A3.2</span>
+        <span class="flex-1 text-sm font-semibold text-zinc-800 dark:text-zinc-100 md:text-base">Guidance Buffer</span>
+        <a href="#Q3" onclick="event.stopPropagation()" class="not-prose shrink-0 inline-flex items-center gap-1.5 rounded-full border border-teal-700/40 bg-white/80 px-2.5 py-1 text-xs font-semibold text-teal-800! no-underline! transition-colors hover:bg-teal-50"><span class="inline-block h-1.5 w-1.5 rounded-full bg-teal-600"></span>Controls εₖ · Theorem 4.5 (Q3) ↑</a>
+        <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform duration-300 group-open/sub:rotate-180 dark:text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+      </summary>
+      <div class="border-t border-zinc-200 px-4 pb-4 pt-3 dark:border-zinc-700">
       <p class="mb-3 text-sm text-zinc-600 dark:text-zinc-300">A moderate guidance buffer reduces CFM projection error by reusing recent improved action labels without letting targets become stale.</p>
       <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
-        <table class="min-w-[480px] border-collapse text-center text-xs">
+        <table class="mx-auto min-w-[480px] border-collapse text-center text-xs">
           <thead class="bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
             <tr>
               <th class="px-2 py-2 text-left">Buffer Size</th>
@@ -733,11 +646,13 @@ We present the results around the three questions used in Section 5 of the paper
           </tbody>
         </table>
       </div>
-      <div class="mt-2 text-xs italic text-zinc-500 dark:text-zinc-400">DMC Dog-run, 5 seeds. 10.24k is the default used in Section 5.1 and 5.2.</div>
-    </section>
+      <div class="mt-2 text-center text-xs italic text-zinc-500 dark:text-zinc-400">DMC Dog-run, 5 seeds. 10.24k is the default used in Section 5.1 and 5.2.</div>
+      </div>
+    </details>
   </div>
 </ResultQCard>
 
+{/*
 ## Design Choices & Ablations
 
 FLAG's monotonic-improvement bound (**Theorem 4.5**, see [Q3](#Q3)) decomposes one update into a *positive MPO improvement* minus two error terms — a **cross-entropy reward drift** (which grows with the local variance) and a **CFM projection error**. FLAG's two key design choices each exist to suppress one of these terms, so the ablations below are direct empirical tests of the theory. Secondary ablations are collapsed at the end.
@@ -826,7 +741,7 @@ Performance is **largely insensitive** to the number of flow-integration steps (
 
 </div>
 </details>
-
+*/}
 
 {/* <Wide>
   <Picture src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />
@@ -850,7 +765,7 @@ Use the `Comparison` component to compare two visuals with an interactive slider
   <Picture slot="itemTwo" src={dogsTrue} alt="True photo of two dogs running side-by-side in shallow water" />
 </Comparison> */}
 
-### Tab panels
+{/* ### Tab panels
 
 Tab panels are a great way to display a labeled collection of related visuals without taking up too much space.
 
@@ -914,15 +829,15 @@ You can also add $\LaTeX$ formulas, rendered during the build process using [$\K
 
 $$
 \int_a^b f(x) dx
-$$
+$$ */}
 
-## Citation
+{/* ## Citation
 
 If you copy your bibliography into `./bibliography.bib`, you can cite papers using their BibTeX keys, and they'll be automatically formatted and included in the bibliography section at the end. For example: [@vaswani2017attention]. Note that these citations are distinct from footnotes[^mynote], which show up in a separate section if you use them.
 
-[^mynote]: On the web, they should really be called "endnotes", since each page constitutes a full document.
+[^mynote]: On the web, they should really be called "endnotes", since each page constitutes a full document. */}
 
-## Table
+{/* ## Table
 
 Add simple tables using [GitHub Flavored Markdown syntax](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables):
 
@@ -931,7 +846,7 @@ Add simple tables using [GitHub Flavored Markdown syntax](https://docs.github.co
 | BERT-base | 0.89 | 0.87 | 4.5 |
 | RoBERTa-large | 0.92 | 0.91 | 7.2 |
 | DistilBERT | 0.86 | 0.84 | 2.1 |
-| XLNet | 0.90 | 0.89 | 6.8 |
+| XLNet | 0.90 | 0.89 | 6.8 | */}
 
 ## BibTeX citation
 
@@ -946,6 +861,6 @@ Displaying the BibTeX entry for your paper in a code block makes it easy to copy
 }
 ```
 
-## Bibliography
+{/* ## Bibliography
 
-[^ref]
+[^ref] */}

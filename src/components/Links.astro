@@ -14,7 +14,7 @@ const { links } = Astro.props;
     links.map((link) => (
       <a
         href={link.url}
-        class="flex flex-row items-center gap-2 rounded-full bg-zinc-800 px-5 py-2 text-lg text-white hover:bg-black hover:no-underline dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-50"
+        class="flex flex-row items-center gap-2 rounded-full bg-zinc-800 px-5 py-2 text-lg text-white transition-colors duration-150 hover:bg-teal-600 hover:text-white hover:no-underline dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-[#FF7259] dark:hover:text-white"
       >
         {link.icon && <Icon name={link.icon} />}
         <span>{link.name}</span>

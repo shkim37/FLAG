@@ -1,0 +1,378 @@
+---
+---
+
+<div
+  class="method-hint not-prose my-4 flex flex-col gap-4 rounded-lg border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-950 shadow-sm sm:flex-row sm:items-center dark:border-emerald-500/50 dark:bg-emerald-900/40 dark:text-emerald-100"
+  aria-label="How to navigate Method Q cards"
+>
+  <div class="mh-demo mx-auto shrink-0 sm:mx-0" aria-hidden="true">
+    <div
+      class="mh-stage relative flex h-[10.25rem] w-[12.25rem] flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm dark:border-zinc-600 dark:bg-zinc-900"
+    >
+      <div class="mh-scene relative min-h-0 flex-1 overflow-hidden p-1.5">
+        {/* Collapsed Q card */}
+        <div class="mh-collapsed absolute inset-x-1.5 top-1.5 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800">
+          <div class="flex items-center gap-1 px-1.5 py-1">
+            <span
+              class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-700 text-[7px] font-bold text-white"
+              >Q1</span
+            >
+            <span class="min-w-0 flex-1 truncate text-[7px] font-semibold text-zinc-700 dark:text-zinc-200"
+              >Construct local IS?</span
+            >
+            <svg
+              class="mh-chevron h-2.5 w-2.5 shrink-0 text-zinc-400"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+
+        {/* Expanded with tabs + panels */}
+        <div class="mh-expanded absolute inset-x-1.5 top-1.5 flex flex-col gap-1 overflow-hidden">
+          <div class="flex items-center gap-1 rounded-md border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 dark:border-zinc-600 dark:bg-zinc-800">
+            <span
+              class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-700 text-[7px] font-bold text-white"
+              >Q1</span
+            >
+            <span class="min-w-0 flex-1 truncate text-[7px] font-semibold text-zinc-700 dark:text-zinc-200"
+              >Construct local IS?</span
+            >
+            <svg class="h-2.5 w-2.5 shrink-0 rotate-180 text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+
+          <div class="relative mx-auto inline-flex rounded-full bg-zinc-200/90 p-0.5 dark:bg-zinc-700/90">
+            <div class="mh-slider pointer-events-none absolute bottom-0.5 left-0.5 top-0.5 w-[2.65rem] rounded-full bg-white shadow-sm dark:bg-zinc-600"></div>
+            <span class="mh-tab relative z-10 rounded-full px-1.5 py-0.5 text-[6px] font-semibold uppercase text-zinc-600 dark:text-zinc-300">Challenge</span>
+            <span class="mh-tab relative z-10 rounded-full px-1.5 py-0.5 text-[6px] font-semibold uppercase text-zinc-600 dark:text-zinc-300">Solution</span>
+            <span class="mh-tab relative z-10 rounded-full px-1.5 py-0.5 text-[6px] font-semibold uppercase text-zinc-600 dark:text-zinc-300">Line</span>
+          </div>
+
+          <div class="mh-panels relative min-h-0 flex-1">
+            <div class="mh-panel mh-panel-0 absolute inset-0 rounded border border-red-200 bg-red-50 p-1 dark:border-amber-500/50 dark:bg-amber-900/40">
+              <div class="mb-0.5 flex items-center gap-0.5 text-[6px] font-bold uppercase text-red-700 dark:text-amber-300">
+                <span class="h-1 w-1 rounded-full bg-red-400 dark:bg-amber-400"></span>Challenge
+              </div>
+              <div class="space-y-0.5">
+                <div class="h-0.5 w-full rounded-full bg-red-200/80 dark:bg-amber-700/50"></div>
+                <div class="h-0.5 w-[78%] rounded-full bg-red-200/60 dark:bg-amber-700/35"></div>
+              </div>
+            </div>
+            <div class="mh-panel mh-panel-1 absolute inset-0 rounded border border-blue-200 bg-blue-50 p-1 dark:border-sky-400/60 dark:bg-sky-800/50">
+              <div class="mb-0.5 flex items-center gap-0.5 text-[6px] font-bold uppercase text-blue-700 dark:text-sky-200">
+                <span class="h-1 w-1 rounded-full bg-blue-400 dark:bg-sky-300"></span>Solution
+              </div>
+              <div class="space-y-0.5">
+                <div class="h-0.5 w-full rounded-full bg-blue-200/80 dark:bg-sky-600/50"></div>
+                <div class="h-0.5 w-[65%] rounded-full bg-blue-200/60 dark:bg-sky-600/35"></div>
+              </div>
+            </div>
+            <div class="mh-panel mh-panel-2 absolute inset-0 rounded border border-teal-200 bg-teal-50 p-1 dark:border-emerald-500/50 dark:bg-emerald-900/40">
+              <div class="mb-0.5 flex items-center gap-0.5 text-[6px] font-bold uppercase text-teal-700 dark:text-emerald-300">
+                <span class="h-1 w-1 rounded-full bg-teal-500 dark:bg-emerald-400"></span>Bottom Line
+              </div>
+              <div class="space-y-0.5">
+                <div class="h-0.5 w-full rounded-full bg-teal-200/80 dark:bg-emerald-700/50"></div>
+                <div class="h-0.5 w-[72%] rounded-full bg-teal-200/60 dark:bg-emerald-700/35"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mh-open-cursor pointer-events-none absolute inset-0">
+          <span class="mh-open-ring absolute top-[14%] right-[10%] h-3 w-3 rounded-full border-2 border-teal-500"></span>
+        </div>
+      </div>
+
+      <div class="mh-footer relative h-[1.35rem] shrink-0 border-t border-zinc-100 bg-zinc-50/90 dark:border-zinc-700 dark:bg-zinc-800/90">
+        <span class="mh-footer-open absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-[8px] font-semibold tracking-wide text-teal-700 uppercase dark:text-emerald-300">
+          Expand each Q card
+        </span>
+        <span class="mh-footer-tabs absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-[8px] font-semibold tracking-wide text-teal-700 uppercase dark:text-emerald-300">
+          Walk Challenge → Solution → Line
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="leading-relaxed sm:flex-1">
+    <p>
+      <strong class="font-bold text-teal-900 dark:text-emerald-100">Expand each Q card to follow the argument.</strong>
+      <span class="text-teal-800 dark:text-emerald-200">
+        {" "}
+        Q1–Q3 can be expanded; open a card to read its step-by-step reasoning.
+      </span>
+    </p>
+    <p class="mt-1.5">
+      <strong class="font-bold text-teal-900 dark:text-emerald-100">Use the tabs: Challenge → Solution → Bottom Line.</strong>
+      <span class="text-teal-800 dark:text-emerald-200">
+        {" "}
+        Each tab is one stage of the answer — start with the problem, then the construction, then the takeaway.
+      </span>
+    </p>
+    <div class="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[10px] font-semibold uppercase tracking-wider text-teal-700 dark:text-emerald-300">
+      <span class="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-1.5 py-0.5 text-red-700 dark:border-amber-500/50 dark:bg-amber-900/40 dark:text-amber-300">
+        <span class="h-1 w-1 rounded-full bg-red-400 dark:bg-amber-400"></span>Challenge
+      </span>
+      <span class="text-teal-600/70 dark:text-emerald-400/70">→</span>
+      <span class="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-blue-700 dark:border-sky-400/60 dark:bg-sky-800/50 dark:text-sky-200">
+        <span class="h-1 w-1 rounded-full bg-blue-400 dark:bg-sky-300"></span>Solution
+      </span>
+      <span class="text-teal-600/70 dark:text-emerald-400/70">→</span>
+      <span class="inline-flex items-center gap-1 rounded-full border border-teal-200 bg-teal-50 px-1.5 py-0.5 text-teal-700 dark:border-emerald-500/50 dark:bg-emerald-900/40 dark:text-emerald-300">
+        <span class="h-1 w-1 rounded-full bg-teal-500 dark:bg-emerald-400"></span>Bottom Line
+      </span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mh-collapsed {
+    animation: mh-collapsed-cycle 8s ease-in-out infinite;
+  }
+
+  .mh-expanded {
+    animation: mh-expanded-cycle 8s ease-in-out infinite;
+  }
+
+  .mh-open-cursor {
+    animation: mh-open-cursor-cycle 8s ease-in-out infinite;
+  }
+
+  .mh-open-ring {
+    animation: mh-open-ring-pulse 8s ease-in-out infinite;
+  }
+
+  .mh-chevron {
+    animation: mh-chevron-cycle 8s ease-in-out infinite;
+  }
+
+  .mh-slider {
+    animation: mh-slider-cycle 8s ease-in-out infinite;
+  }
+
+  .mh-panel-0 {
+    animation: mh-panel-0-cycle 8s ease-in-out infinite;
+  }
+
+  .mh-panel-1 {
+    animation: mh-panel-1-cycle 8s ease-in-out infinite;
+  }
+
+  .mh-panel-2 {
+    animation: mh-panel-2-cycle 8s ease-in-out infinite;
+  }
+
+  .mh-footer-open {
+    animation: mh-footer-open-cycle 8s ease-in-out infinite;
+  }
+
+  .mh-footer-tabs {
+    animation: mh-footer-tabs-cycle 8s ease-in-out infinite;
+  }
+
+  @keyframes mh-collapsed-cycle {
+    0%,
+    20% {
+      opacity: 1;
+    }
+    26%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mh-expanded-cycle {
+    0%,
+    22% {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    28%,
+    92% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    98%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mh-open-cursor-cycle {
+    0%,
+    10% {
+      opacity: 0;
+    }
+    14%,
+    20% {
+      opacity: 1;
+    }
+    24%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mh-open-ring-pulse {
+    0%,
+    12% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    16% {
+      opacity: 0.85;
+      transform: scale(1);
+    }
+    20% {
+      opacity: 0;
+      transform: scale(1.35);
+    }
+    21%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mh-chevron-cycle {
+    0%,
+    18% {
+      transform: rotate(0deg);
+    }
+    24%,
+    100% {
+      transform: rotate(180deg);
+    }
+  }
+
+  @keyframes mh-slider-cycle {
+    0%,
+    30% {
+      transform: translateX(0);
+    }
+    38%,
+    54% {
+      transform: translateX(2.65rem);
+    }
+    62%,
+    78% {
+      transform: translateX(5.3rem);
+    }
+    86%,
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes mh-panel-0-cycle {
+    0%,
+    28%,
+    88%,
+    100% {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    36%,
+    82% {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  @keyframes mh-panel-1-cycle {
+    0%,
+    36%,
+    60%,
+    100% {
+      opacity: 0;
+    }
+    40%,
+    56% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mh-panel-2-cycle {
+    0%,
+    58%,
+    66%,
+    100% {
+      opacity: 0;
+    }
+    64%,
+    80% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mh-footer-open-cycle {
+    0%,
+    34% {
+      opacity: 1;
+    }
+    40%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mh-footer-tabs-cycle {
+    0%,
+    36% {
+      opacity: 0;
+    }
+    42%,
+    88% {
+      opacity: 1;
+    }
+    94%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mh-collapsed,
+    .mh-expanded,
+    .mh-open-cursor,
+    .mh-slider,
+    .mh-panel-0,
+    .mh-panel-1,
+    .mh-panel-2,
+    .mh-footer-open,
+    .mh-footer-tabs {
+      animation: none;
+    }
+
+    .mh-collapsed {
+      opacity: 0;
+    }
+
+    .mh-expanded {
+      opacity: 1;
+    }
+
+    .mh-panel-0 {
+      opacity: 1;
+    }
+
+    .mh-panel-1,
+    .mh-panel-2 {
+      opacity: 0;
+    }
+
+    .mh-footer-open {
+      display: none;
+    }
+
+    .mh-footer-tabs {
+      opacity: 1;
+    }
+  }
+</style>

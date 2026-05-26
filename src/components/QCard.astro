@@ -45,10 +45,10 @@ const { number, title } = Astro.props;
         type="button"
         data-target="challenge"
         data-index="0"
-        class="qcard-tab relative z-10 flex items-center justify-center gap-1 rounded-full px-3.5 py-1 text-xs font-semibold uppercase tracking-wide transition-colors duration-150 text-red-700 dark:text-rose-300"
+        class="qcard-tab relative z-10 flex items-center justify-center gap-1 rounded-full px-3.5 py-1 text-xs font-semibold uppercase tracking-wide transition-colors duration-150 text-red-700 dark:text-amber-300"
         data-active="true"
       >
-        <span class="dot inline-block h-1.5 w-1.5 rounded-full bg-red-400 dark:bg-rose-400"></span>
+        <span class="dot inline-block h-1.5 w-1.5 rounded-full bg-red-400 dark:bg-amber-400"></span>
         Challenge
       </button>
       <button
@@ -74,9 +74,9 @@ const { number, title } = Astro.props;
     </div>
 
     {/* Step panels — only one visible at a time */}
-    <div data-panel="challenge" class="qcard-panel rounded-lg border border-red-200 bg-red-50 p-4 dark:border-rose-700/40 dark:bg-rose-950/50">
-      <div class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-red-700 dark:text-rose-300">
-        <span class="inline-block h-2 w-2 rounded-full bg-red-400 dark:bg-rose-400"></span>
+    <div data-panel="challenge" class="qcard-panel rounded-lg border border-red-200 bg-red-50 p-4 dark:border-amber-500/50 dark:bg-amber-900/40">
+      <div class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-red-700 dark:text-amber-300">
+        <span class="inline-block h-2 w-2 rounded-full bg-red-400 dark:bg-amber-400"></span>
         Challenge
       </div>
       <div class="text-sm leading-relaxed text-zinc-800 dark:text-zinc-200 [&_p]:my-1 [&_ul]:my-1 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:my-0.5">
@@ -84,8 +84,8 @@ const { number, title } = Astro.props;
       </div>
     </div>
 
-    <div data-panel="solution" class="qcard-panel hidden rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-sky-700/40 dark:bg-sky-950/50">
-      <div class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-sky-300">
+    <div data-panel="solution" class="qcard-panel hidden rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-sky-400/60 dark:bg-sky-800/50">
+      <div class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-sky-200">
         <span class="inline-block h-2 w-2 rounded-full bg-blue-400 dark:bg-sky-400"></span>
         Solution
       </div>
@@ -94,7 +94,7 @@ const { number, title } = Astro.props;
       </div>
     </div>
 
-    <div data-panel="bottom-line" class="qcard-panel hidden rounded-lg border border-teal-200 bg-teal-50 p-4 dark:border-emerald-700/40 dark:bg-emerald-950/50">
+    <div data-panel="bottom-line" class="qcard-panel hidden rounded-lg border border-teal-200 bg-teal-50 p-4 dark:border-emerald-500/50 dark:bg-emerald-900/40">
       <div class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-emerald-300">
         <span class="inline-block h-2 w-2 rounded-full bg-teal-500 dark:bg-emerald-400"></span>
         Bottom Line
@@ -110,14 +110,14 @@ const { number, title } = Astro.props;
   type Key = "challenge" | "solution" | "bottom-line";
 
   const ACTIVE_TEXT: Record<Key, string> = {
-    challenge: "text-red-700 dark:text-rose-300",
-    solution: "text-blue-700 dark:text-sky-300",
+    challenge: "text-red-700 dark:text-amber-300",
+    solution: "text-blue-700 dark:text-sky-200",
     "bottom-line": "text-teal-700 dark:text-emerald-300",
   };
 
   const ACTIVE_DOT: Record<Key, string> = {
-    challenge: "bg-red-400 dark:bg-rose-400",
-    solution: "bg-blue-400 dark:bg-sky-400",
+    challenge: "bg-red-400 dark:bg-amber-400",
+    solution: "bg-blue-400 dark:bg-sky-300",
     "bottom-line": "bg-teal-500 dark:bg-emerald-400",
   };
 

@@ -37,19 +37,17 @@ const answerLabel = number.replace("Q", "A");
 
   <div class="border-t border-zinc-200 px-5 pb-5 pt-4 dark:border-zinc-700">
     <div
-      class="mb-4 rounded-lg border border-teal-200 bg-teal-50 p-4 dark:border-emerald-700/40 dark:bg-emerald-950/40"
+      class="mb-4 rounded-lg border border-teal-200 bg-teal-50 p-4 dark:border-emerald-500/50 dark:bg-emerald-900/40"
     >
-      <div
-        class="mb-1 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-emerald-300"
-      >
-        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal-600 text-xs font-bold text-white dark:bg-emerald-600">
+      <div class="flex items-center gap-3">
+        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-600 text-xs font-bold text-white dark:bg-emerald-600">
           {answerLabel}
         </span>
-        Answer
+        <div class="text-base font-bold leading-snug text-zinc-900 dark:text-zinc-100">
+          {answer}
+        </div>
       </div>
-      <div class="text-base font-bold leading-snug text-zinc-900 dark:text-zinc-100">
-        {answer}
-      </div>
+      <slot name="answer-links" />
     </div>
 
     <slot />
